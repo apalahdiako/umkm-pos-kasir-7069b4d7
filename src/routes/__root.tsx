@@ -75,9 +75,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Nota Pro — UMKM Invoice System" },
       { name: "description", content: "Sistem manajemen nota, invoice, dan resi untuk UMKM Indonesia." },
       { property: "og:title", content: "Nota Pro — UMKM Invoice System" },
-      { property: "og:description", content: "Kelola transaksi, produk, dan cetak resi dengan mudah." },
+      { property: "og:description", content: "Sistem manajemen nota, invoice, dan resi untuk UMKM Indonesia." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Nota Pro — UMKM Invoice System" },
+      { name: "twitter:description", content: "Sistem manajemen nota, invoice, dan resi untuk UMKM Indonesia." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/09ec5f58-3ec7-4bdb-9555-caae18de728a/id-preview-c1154e2b--449db1b2-54da-4beb-b003-7449397de04e.lovable.app-1779848118183.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/09ec5f58-3ec7-4bdb-9555-caae18de728a/id-preview-c1154e2b--449db1b2-54da-4beb-b003-7449397de04e.lovable.app-1779848118183.png" },
     ],
     links: [
       {
