@@ -1,25 +1,39 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, ShoppingCart, History, Package, Settings as SettingsIcon } from "lucide-react";
+import { Home, ShoppingCart, History, Package, Settings as SettingsIcon, BarChart3 } from "lucide-react";
 import type { ReactNode } from "react";
+import { useStoreSettings, useTransactions, formatCurrency } from "@/lib/nota-store";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: Home },
-  { to: "/transaction", label: "Buat Transaksi", icon: ShoppingCart },
+  { to: "/transaction", label: "Kasir (POS)", icon: ShoppingCart },
   { to: "/history", label: "Riwayat", icon: History },
   { to: "/products", label: "Produk", icon: Package },
   { to: "/settings", label: "Pengaturan", icon: SettingsIcon },
+  { to: "/reports", label: "Laporan", icon: BarChart3 },
 ] as const;
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [settings] = useStoreSettings();
+  const [transactions] = useTransactions();
+  const today = new Date().toISOString().slice(0, 10);
+  const todayTxs = transactions.filter((t) => (t.date || "").slice(0, 10) === today);
+  const todayTotal = todayTxs.reduce((s, t) => s + (t.total || 0), 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="flex min-h-screen">
         <aside className="hidden md:flex w-64 shrink-0 flex-col bg-slate-900 text-slate-100 p-4">
-          <div className="px-2 py-4">
-            <h1 className="text-2xl font-bold">Nota Pro</h1>
-            <p className="text-xs text-slate-400">UMKM Invoice System</p>
+          <div className="px-2 py-4 flex items-center gap-3">
+            {settings.logo ? (
+              <img src={settings.logo} alt="Logo" className="h-10 w-10 rounded object-cover bg-white" />
+            ) : (
+              <div className="h-10 w-10 rounded bg-blue-600 flex items-center justify-center font-bold">NP</div>
+            )}
+            <div>
+              <h1 className="text-lg font-bold leading-tight">Nota Pro</h1>
+              <p className="text-[10px] text-slate-400">v2.0 · UMKM</p>
+            </div>
           </div>
           <nav className="mt-4 flex flex-col gap-1">
             {nav.map(({ to, label, icon: Icon }) => {
@@ -29,9 +43,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                   key={to}
                   to={to}
                   className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                    active
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                    active ? "bg-blue-600 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -40,11 +52,16 @@ export function AppLayout({ children }: { children: ReactNode }) {
               );
             })}
           </nav>
+          <div className="mt-auto border-t border-slate-800 pt-4 px-2 text-xs text-slate-400">
+            <p>Hari ini</p>
+            <p className="text-white font-semibold text-sm">{formatCurrency(todayTotal)}</p>
+            <p>{todayTxs.length} transaksi</p>
+          </div>
         </aside>
 
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Mobile top nav */}
-          <header className="md:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between">
+          <header className="md:hidden bg-slate-900 text-white px-4 py-3 flex items-center gap-2">
+            {settings.logo && <img src={settings.logo} alt="Logo" className="h-7 w-7 rounded object-cover bg-white" />}
             <h1 className="text-lg font-bold">Nota Pro</h1>
           </header>
           <nav className="md:hidden bg-slate-800 text-slate-200 overflow-x-auto flex gap-1 px-2 py-2 text-xs">
