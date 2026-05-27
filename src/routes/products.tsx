@@ -29,7 +29,6 @@ const emptyDraft: Draft = {
 
 const CATEGORY_PRESETS = ["Makanan", "Minuman", "Barang", "Jasa", "Lain-lain"];
 
-export default function _noop() {} // tree-shake guard
 
 function ProductsPage() {
   const [products, setProducts] = useProducts();
