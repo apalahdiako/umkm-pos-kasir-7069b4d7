@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 
+// ============= Types =============
+export type RecipeItem = { name: string; qty: number; unit: string; costPerUnit: number };
+
 export type Product = {
   id: number;
   name: string;
   category: string;
   price: number;
   stock: number;
+  hpp?: number; // Harga Pokok Penjualan / cost
   image?: string | null;
   description?: string;
+  recipe?: RecipeItem[]; // BOM
 };
 
 export type CartItem = {
@@ -23,47 +28,132 @@ export type TxStatus = "completed" | "pending" | "cancelled";
 
 export type Transaction = {
   id: string;
-  date: string; // ISO
+  date: string;
   customer: string;
+  customerPhone?: string;
+  memberId?: string | null;
+  tableNo?: string | null;
   items: CartItem[];
   subtotal: number;
   discount: number;
   discountType?: "nominal" | "percent";
+  loyaltyDiscount?: number;
   tax: number;
   total: number;
+  hppTotal?: number; // total HPP for laba/rugi
   paymentMethod: PaymentMethod;
   amountPaid: number;
   change: number;
   status: TxStatus;
   receiptType?: ReceiptType | null;
   notes?: string;
+  shiftId?: string | null;
+  cashierName?: string;
+  pointsEarned?: number;
 };
 
 export type StoreSettings = {
   storeName: string;
+  storeSlug: string; // for catalog URL
   phone: string;
   email: string;
   address: string;
   city: string;
   npwp: string;
-  logo: string | null; // base64
+  logo: string | null;
   taxEnabled: boolean;
   taxPercentage: number;
   paymentMethods: PaymentMethod[];
   customNotes: string;
   showLogoInReceipt: boolean;
   showTaxNumberInReceipt: boolean;
+  // Wallet & QRIS
+  qrisMerchantName: string;
+  qrisStaticPayload: string; // optional static QRIS string
+  // Loyalty
+  loyaltyEnabled: boolean;
+  pointsPerRupiah: number; // e.g. 1 point per 10000
+  rupiahPerPoint: number; // e.g. 1 point = Rp 100
+  // Operators / PIN
+  managerPin: string;
+  ownerPin: string;
+  // Fixed costs (per day) for laba/rugi
+  dailyRent: number;
+  dailyUtilities: number;
+  // WA business number for notifications
+  waBusinessNumber: string;
 };
 
+export type Member = {
+  id: string;
+  name: string;
+  phone: string;
+  points: number;
+  totalSpent: number;
+  joinedAt: string;
+};
+
+export type LedgerEntry = {
+  id: string;
+  date: string;
+  type: "sale" | "withdrawal" | "fee" | "refund" | "topup" | "adjustment";
+  description: string;
+  amount: number; // positive = in, negative = out
+  refTxId?: string | null;
+};
+
+export type Cashbon = {
+  id: string;
+  customer: string;
+  phone: string;
+  amount: number;
+  paid: number;
+  description: string;
+  dueDate: string;
+  createdAt: string;
+  status: "open" | "paid" | "overdue";
+  lastReminderAt?: string | null;
+};
+
+export type Shift = {
+  id: string;
+  cashierName: string;
+  openedAt: string;
+  closedAt?: string | null;
+  openingCash: number;
+  closingCash?: number;
+  expectedCash?: number;
+  notes?: string;
+  status: "open" | "closed";
+};
+
+export type PaymentLink = {
+  id: string;
+  customer: string;
+  amount: number;
+  description: string;
+  createdAt: string;
+  paidAt?: string | null;
+  status: "pending" | "paid" | "expired";
+  refTxId?: string | null;
+};
+
+// ============= Defaults =============
 const DEFAULT_PRODUCTS: Product[] = [
-  { id: 1, name: "Kopi Susu", category: "Minuman", price: 18000, stock: 50 },
-  { id: 2, name: "Teh Manis", category: "Minuman", price: 8000, stock: 80 },
-  { id: 3, name: "Nasi Goreng", category: "Makanan", price: 25000, stock: 20 },
-  { id: 4, name: "Mie Ayam", category: "Makanan", price: 20000, stock: 15 },
+  { id: 1, name: "Kopi Susu", category: "Minuman", price: 18000, hpp: 7000, stock: 50, recipe: [
+    { name: "Espresso", qty: 30, unit: "ml", costPerUnit: 80 },
+    { name: "Susu", qty: 150, unit: "ml", costPerUnit: 20 },
+    { name: "Gula aren", qty: 15, unit: "ml", costPerUnit: 50 },
+    { name: "Cup + tutup", qty: 1, unit: "pcs", costPerUnit: 800 },
+  ] },
+  { id: 2, name: "Teh Manis", category: "Minuman", price: 8000, hpp: 2500, stock: 80 },
+  { id: 3, name: "Nasi Goreng", category: "Makanan", price: 25000, hpp: 12000, stock: 20 },
+  { id: 4, name: "Mie Ayam", category: "Makanan", price: 20000, hpp: 9000, stock: 15 },
 ];
 
 const DEFAULT_SETTINGS: StoreSettings = {
   storeName: "Toko Saya",
+  storeSlug: "tokosaya",
   phone: "08xx-xxxx-xxxx",
   email: "toko@email.com",
   address: "Jl. Alamat Toko",
@@ -76,8 +166,19 @@ const DEFAULT_SETTINGS: StoreSettings = {
   customNotes: "Terima kasih atas pembelian Anda!",
   showLogoInReceipt: true,
   showTaxNumberInReceipt: true,
+  qrisMerchantName: "TOKO SAYA",
+  qrisStaticPayload: "",
+  loyaltyEnabled: true,
+  pointsPerRupiah: 10000, // 1 poin tiap Rp 10.000
+  rupiahPerPoint: 100,
+  managerPin: "1234",
+  ownerPin: "9999",
+  dailyRent: 0,
+  dailyUtilities: 0,
+  waBusinessNumber: "",
 };
 
+// ============= Hooks =============
 function useLocalStorage<T>(key: string, initial: T) {
   const [value, setValue] = useState<T>(initial);
   const [hydrated, setHydrated] = useState(false);
@@ -135,7 +236,14 @@ export const useTransactions = () =>
   useLocalStorageArray<Transaction>("nota_pro_transactions", []);
 export const useStoreSettings = () =>
   useLocalStorage<StoreSettings>("nota_pro_store_settings", DEFAULT_SETTINGS);
+export const useMembers = () => useLocalStorageArray<Member>("nota_pro_members", []);
+export const useLedger = () => useLocalStorageArray<LedgerEntry>("nota_pro_ledger", []);
+export const useCashbons = () => useLocalStorageArray<Cashbon>("nota_pro_cashbons", []);
+export const useShifts = () => useLocalStorageArray<Shift>("nota_pro_shifts", []);
+export const usePaymentLinks = () =>
+  useLocalStorageArray<PaymentLink>("nota_pro_payment_links", []);
 
+// ============= Utils =============
 export function formatCurrency(amount: number) {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -172,7 +280,43 @@ export function generateInvoiceId(existing: Transaction[]) {
   return `INV${dateStr}${String(count).padStart(3, "0")}`;
 }
 
-// ---------- Print helpers ----------
+export function shortId(prefix = "ID") {
+  return `${prefix}${Date.now().toString(36).toUpperCase()}${Math.floor(Math.random() * 1000)
+    .toString(36)
+    .toUpperCase()}`;
+}
+
+// QRIS dinamis — dummy: encode merchant + amount as text, render via api.qrserver.com
+export function buildQrisPayload(
+  merchant: string,
+  amount: number,
+  invoiceId: string,
+  staticPayload?: string,
+) {
+  if (staticPayload && staticPayload.trim()) {
+    // Append amount to a real static QRIS payload (simplified mock; real QRIS uses tag 54)
+    return `${staticPayload.trim()}|AMT:${amount}|INV:${invoiceId}`;
+  }
+  return `QRIS|MERCHANT:${merchant}|AMT:${amount}|INV:${invoiceId}|TS:${Date.now()}`;
+}
+
+export function qrImageUrl(data: string, size = 220) {
+  return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(data)}`;
+}
+
+export function waLink(phone: string, message: string) {
+  const clean = (phone || "").replace(/[^0-9]/g, "").replace(/^0/, "62");
+  return `https://wa.me/${clean}?text=${encodeURIComponent(message)}`;
+}
+
+export function calcHppTotal(items: CartItem[], products: Product[]) {
+  return items.reduce((s, i) => {
+    const p = products.find((pp) => pp.id === i.productId);
+    return s + (p?.hpp || 0) * i.qty;
+  }, 0);
+}
+
+// ============= Print helpers =============
 function openPrintWindow(html: string, width = 600, height = 800) {
   const w = window.open("", "_blank", `width=${width},height=${height}`);
   if (!w) {
@@ -223,11 +367,13 @@ export function printNota(tx: Transaction, s: StoreSettings) {
       <div><b>${tx.id}</b></div>
       <div>${formatDate(tx.date)}</div>
       <div>Customer: ${tx.customer || "-"}</div>
+      ${tx.tableNo ? `<div>Meja: ${tx.tableNo}</div>` : ""}
       <hr/>
       <table>${rows}</table>
       <hr/>
       <div class="right">Subtotal: ${formatCurrency(tx.subtotal)}</div>
       ${tx.discount > 0 ? `<div class="right">Diskon: -${formatCurrency(tx.discount)}</div>` : ""}
+      ${tx.loyaltyDiscount ? `<div class="right">Poin: -${formatCurrency(tx.loyaltyDiscount)}</div>` : ""}
       ${tx.tax > 0 ? `<div class="right">Pajak: ${formatCurrency(tx.tax)}</div>` : ""}
       <hr/>
       <div class="total"><span>TOTAL</span><span>${formatCurrency(tx.total)}</span></div>
@@ -235,6 +381,7 @@ export function printNota(tx: Transaction, s: StoreSettings) {
       <div>Metode: ${tx.paymentMethod}</div>
       <div>Bayar: ${formatCurrency(tx.amountPaid)}</div>
       <div>Kembalian: ${formatCurrency(tx.change)}</div>
+      ${tx.pointsEarned ? `<div>Poin diperoleh: +${tx.pointsEarned}</div>` : ""}
       <hr/>
       <div class="foot">${s.customNotes || "Terima kasih!"}</div>
       <script>setTimeout(()=>window.print(),200);</script>
@@ -381,5 +528,31 @@ export function printByType(
   else printInvoice(tx, s);
 }
 
-// Backward-compat alias used by older code
 export const printReceipt = printNota;
+
+// Build a plain text receipt for sharing via WhatsApp
+export function buildReceiptText(tx: Transaction, s: StoreSettings) {
+  const lines: string[] = [];
+  lines.push(`*${s.storeName}*`);
+  if (s.address) lines.push(s.address);
+  lines.push("--------------------------------");
+  lines.push(`Invoice: ${tx.id}`);
+  lines.push(`Tanggal: ${formatDate(tx.date)}`);
+  lines.push(`Customer: ${tx.customer || "-"}`);
+  lines.push("--------------------------------");
+  tx.items.forEach((i) => {
+    lines.push(`${i.name} x${i.qty}  ${formatCurrency(i.price * i.qty)}`);
+  });
+  lines.push("--------------------------------");
+  lines.push(`Subtotal : ${formatCurrency(tx.subtotal)}`);
+  if (tx.discount) lines.push(`Diskon   : -${formatCurrency(tx.discount)}`);
+  if (tx.loyaltyDiscount) lines.push(`Poin     : -${formatCurrency(tx.loyaltyDiscount)}`);
+  if (tx.tax) lines.push(`Pajak    : ${formatCurrency(tx.tax)}`);
+  lines.push(`*TOTAL    : ${formatCurrency(tx.total)}*`);
+  lines.push(`Bayar    : ${formatCurrency(tx.amountPaid)} (${tx.paymentMethod})`);
+  if (tx.change) lines.push(`Kembali  : ${formatCurrency(tx.change)}`);
+  lines.push("--------------------------------");
+  if (tx.pointsEarned) lines.push(`+${tx.pointsEarned} poin loyalty 🎉`);
+  lines.push(s.customNotes || "Terima kasih!");
+  return lines.join("\n");
+}
