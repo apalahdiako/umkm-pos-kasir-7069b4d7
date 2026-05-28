@@ -1,6 +1,19 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, ShoppingCart, History, Package, Settings as SettingsIcon, BarChart3 } from "lucide-react";
-import type { ReactNode } from "react";
+import {
+  Home,
+  ShoppingCart,
+  History,
+  Package,
+  Settings as SettingsIcon,
+  BarChart3,
+  Wallet,
+  Users,
+  BookOpen,
+  Store,
+  Wifi,
+  WifiOff,
+} from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useStoreSettings, useTransactions, formatCurrency } from "@/lib/nota-store";
 
 const nav = [
@@ -8,14 +21,34 @@ const nav = [
   { to: "/transaction", label: "Kasir (POS)", icon: ShoppingCart },
   { to: "/history", label: "Riwayat", icon: History },
   { to: "/products", label: "Produk", icon: Package },
-  { to: "/settings", label: "Pengaturan", icon: SettingsIcon },
+  { to: "/ledger", label: "Mutasi Saldo", icon: Wallet },
+  { to: "/kasbon", label: "Kasbon", icon: BookOpen },
+  { to: "/members", label: "Member", icon: Users },
   { to: "/reports", label: "Laporan", icon: BarChart3 },
+  { to: "/catalog", label: "Toko Online", icon: Store },
+  { to: "/settings", label: "Pengaturan", icon: SettingsIcon },
 ] as const;
+
+function useOnline() {
+  const [online, setOnline] = useState(true);
+  useEffect(() => {
+    const upd = () => setOnline(navigator.onLine);
+    upd();
+    window.addEventListener("online", upd);
+    window.addEventListener("offline", upd);
+    return () => {
+      window.removeEventListener("online", upd);
+      window.removeEventListener("offline", upd);
+    };
+  }, []);
+  return online;
+}
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [settings] = useStoreSettings();
   const [transactions] = useTransactions();
+  const online = useOnline();
   const today = new Date().toISOString().slice(0, 10);
   const todayTxs = transactions.filter((t) => (t.date || "").slice(0, 10) === today);
   const todayTotal = todayTxs.reduce((s, t) => s + (t.total || 0), 0);
@@ -32,10 +65,14 @@ export function AppLayout({ children }: { children: ReactNode }) {
             )}
             <div>
               <h1 className="text-lg font-bold leading-tight">Nota Pro</h1>
-              <p className="text-[10px] text-slate-400">v2.0 · UMKM</p>
+              <p className="text-[10px] text-slate-400">v3.0 · UMKM</p>
             </div>
           </div>
-          <nav className="mt-4 flex flex-col gap-1">
+          <div className={`mx-2 mb-2 text-[10px] font-medium px-2 py-1 rounded inline-flex items-center gap-1 w-fit ${online ? "bg-green-900/40 text-green-300" : "bg-orange-900/40 text-orange-300"}`}>
+            {online ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
+            {online ? "Online" : "Offline — sync pending"}
+          </div>
+          <nav className="mt-2 flex flex-col gap-0.5 overflow-y-auto">
             {nav.map(({ to, label, icon: Icon }) => {
               const active = pathname === to;
               return (
@@ -62,7 +99,10 @@ export function AppLayout({ children }: { children: ReactNode }) {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="md:hidden bg-slate-900 text-white px-4 py-3 flex items-center gap-2">
             {settings.logo && <img src={settings.logo} alt="Logo" className="h-7 w-7 rounded object-cover bg-white" />}
-            <h1 className="text-lg font-bold">Nota Pro</h1>
+            <h1 className="text-lg font-bold flex-1">Nota Pro</h1>
+            <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${online ? "bg-green-700" : "bg-orange-700"}`}>
+              {online ? "Online" : "Offline"}
+            </span>
           </header>
           <nav className="md:hidden bg-slate-800 text-slate-200 overflow-x-auto flex gap-1 px-2 py-2 text-xs">
             {nav.map(({ to, label, icon: Icon }) => {
