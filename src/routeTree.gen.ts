@@ -13,8 +13,13 @@ import { Route as TransactionRouteImport } from './routes/transaction'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProductsRouteImport } from './routes/products'
+import { Route as MembersRouteImport } from './routes/members'
+import { Route as LedgerRouteImport } from './routes/ledger'
+import { Route as KasbonRouteImport } from './routes/kasbon'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PayIdRouteImport } from './routes/pay.$id'
 
 const TransactionRoute = TransactionRouteImport.update({
   id: '/transaction',
@@ -36,9 +41,29 @@ const ProductsRoute = ProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MembersRoute = MembersRouteImport.update({
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LedgerRoute = LedgerRouteImport.update({
+  id: '/ledger',
+  path: '/ledger',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KasbonRoute = KasbonRouteImport.update({
+  id: '/kasbon',
+  path: '/kasbon',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HistoryRoute = HistoryRouteImport.update({
   id: '/history',
   path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CatalogRoute = CatalogRouteImport.update({
+  id: '/catalog',
+  path: '/catalog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -46,60 +71,106 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PayIdRoute = PayIdRouteImport.update({
+  id: '/pay/$id',
+  path: '/pay/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/catalog': typeof CatalogRoute
   '/history': typeof HistoryRoute
+  '/kasbon': typeof KasbonRoute
+  '/ledger': typeof LedgerRoute
+  '/members': typeof MembersRoute
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/transaction': typeof TransactionRoute
+  '/pay/$id': typeof PayIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/catalog': typeof CatalogRoute
   '/history': typeof HistoryRoute
+  '/kasbon': typeof KasbonRoute
+  '/ledger': typeof LedgerRoute
+  '/members': typeof MembersRoute
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/transaction': typeof TransactionRoute
+  '/pay/$id': typeof PayIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/catalog': typeof CatalogRoute
   '/history': typeof HistoryRoute
+  '/kasbon': typeof KasbonRoute
+  '/ledger': typeof LedgerRoute
+  '/members': typeof MembersRoute
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/transaction': typeof TransactionRoute
+  '/pay/$id': typeof PayIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/catalog'
     | '/history'
+    | '/kasbon'
+    | '/ledger'
+    | '/members'
     | '/products'
     | '/reports'
     | '/settings'
     | '/transaction'
+    | '/pay/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/history' | '/products' | '/reports' | '/settings' | '/transaction'
+  to:
+    | '/'
+    | '/catalog'
+    | '/history'
+    | '/kasbon'
+    | '/ledger'
+    | '/members'
+    | '/products'
+    | '/reports'
+    | '/settings'
+    | '/transaction'
+    | '/pay/$id'
   id:
     | '__root__'
     | '/'
+    | '/catalog'
     | '/history'
+    | '/kasbon'
+    | '/ledger'
+    | '/members'
     | '/products'
     | '/reports'
     | '/settings'
     | '/transaction'
+    | '/pay/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CatalogRoute: typeof CatalogRoute
   HistoryRoute: typeof HistoryRoute
+  KasbonRoute: typeof KasbonRoute
+  LedgerRoute: typeof LedgerRoute
+  MembersRoute: typeof MembersRoute
   ProductsRoute: typeof ProductsRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
   TransactionRoute: typeof TransactionRoute
+  PayIdRoute: typeof PayIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -132,11 +203,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/members': {
+      id: '/members'
+      path: '/members'
+      fullPath: '/members'
+      preLoaderRoute: typeof MembersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ledger': {
+      id: '/ledger'
+      path: '/ledger'
+      fullPath: '/ledger'
+      preLoaderRoute: typeof LedgerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kasbon': {
+      id: '/kasbon'
+      path: '/kasbon'
+      fullPath: '/kasbon'
+      preLoaderRoute: typeof KasbonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/history': {
       id: '/history'
       path: '/history'
       fullPath: '/history'
       preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/catalog': {
+      id: '/catalog'
+      path: '/catalog'
+      fullPath: '/catalog'
+      preLoaderRoute: typeof CatalogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -146,27 +245,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pay/$id': {
+      id: '/pay/$id'
+      path: '/pay/$id'
+      fullPath: '/pay/$id'
+      preLoaderRoute: typeof PayIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CatalogRoute: CatalogRoute,
   HistoryRoute: HistoryRoute,
+  KasbonRoute: KasbonRoute,
+  LedgerRoute: LedgerRoute,
+  MembersRoute: MembersRoute,
   ProductsRoute: ProductsRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
   TransactionRoute: TransactionRoute,
+  PayIdRoute: PayIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
