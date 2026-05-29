@@ -1,20 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  Home,
-  ShoppingCart,
-  History,
-  Package,
-  Settings as SettingsIcon,
-  BarChart3,
-  Wallet,
-  Users,
-  BookOpen,
-  Store,
-  Wifi,
-  WifiOff,
+  Home, ShoppingCart, History, Package, Settings as SettingsIcon,
+  BarChart3, Wallet, Users, BookOpen, Store, Wifi, WifiOff, LogIn, LogOut,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useStoreSettings, useTransactions, formatCurrency } from "@/lib/nota-store";
+import { useAuth } from "@/lib/auth-context";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: Home },
@@ -93,6 +84,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
             <p>Hari ini</p>
             <p className="text-white font-semibold text-sm">{formatCurrency(todayTotal)}</p>
             <p>{todayTxs.length} transaksi</p>
+            <UserBox />
           </div>
         </aside>
 
