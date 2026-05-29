@@ -1,21 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Plus, Trash2, Minus, Search, Receipt, FileText, Mail, X } from "lucide-react";
+import { Plus, Trash2, Minus, Search, Receipt, FileText, Mail, X, MessageCircle, Link2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import {
-  formatCurrency,
-  generateInvoiceId,
-  printByType,
-  printNota,
-  printResi,
-  printInvoice,
-  useProducts,
-  useStoreSettings,
-  useTransactions,
-  type CartItem,
-  type PaymentMethod,
-  type ReceiptType,
-  type Transaction,
+  buildQrisPayload, buildReceiptText, calcHppTotal, formatCurrency, generateInvoiceId,
+  printByType, printNota, printResi, printInvoice, qrImageUrl, shortId, usePaymentLinks,
+  useProducts, useStoreSettings, useTransactions, waLink,
+  type CartItem, type PaymentMethod, type ReceiptType, type Transaction,
 } from "@/lib/nota-store";
 
 export const Route = createFileRoute("/transaction")({
@@ -27,9 +18,11 @@ function KasirPage() {
   const [products] = useProducts();
   const [transactions, setTransactions] = useTransactions();
   const [settings] = useStoreSettings();
+  const [paymentLinks, setPaymentLinks] = usePaymentLinks();
 
   const [items, setItems] = useState<CartItem[]>([]);
   const [customer, setCustomer] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Semua");
   const [discount, setDiscount] = useState(0);
@@ -38,6 +31,8 @@ function KasirPage() {
   const [amountPaid, setAmountPaid] = useState(0);
   const [lastTx, setLastTx] = useState<Transaction | null>(null);
   const [showReceipt, setShowReceipt] = useState(false);
+  const [showQris, setShowQris] = useState(false);
+  const [generatedLink, setGeneratedLink] = useState<string | null>(null);
 
   const categories = useMemo(() => {
     const set = new Set<string>(["Semua"]);
@@ -83,45 +78,77 @@ function KasirPage() {
   const reset = () => {
     setItems([]);
     setCustomer("");
+    setCustomerPhone("");
     setDiscount(0);
     setAmountPaid(0);
     setPayment("Tunai");
   };
 
   const processPayment = () => {
-    if (items.length === 0) {
-      alert("Keranjang kosong!");
-      return;
-    }
-    if (amountPaid < total) {
-      alert("Jumlah bayar kurang dari total!");
-      return;
-    }
+    if (items.length === 0) return alert("Keranjang kosong!");
+    if (payment !== "QRIS" && amountPaid < total) return alert("Jumlah bayar kurang dari total!");
+    const paid = payment === "QRIS" ? total : amountPaid;
     const tx: Transaction = {
       id: generateInvoiceId(transactions),
       date: new Date().toISOString(),
       customer: customer.trim() || "Umum",
+      customerPhone: customerPhone.trim() || undefined,
       items,
       subtotal,
       discount: discAmount,
       discountType,
       tax,
       total,
+      hppTotal: calcHppTotal(items, products),
       paymentMethod: payment,
-      amountPaid,
-      change,
+      amountPaid: paid,
+      change: Math.max(0, paid - total),
       status: "completed",
       receiptType: null,
     };
     setTransactions([tx, ...transactions]);
     setLastTx(tx);
+    setShowQris(false);
     setShowReceipt(true);
     reset();
+  };
+
+  const handlePay = () => {
+    if (items.length === 0) return alert("Keranjang kosong!");
+    if (payment === "QRIS") {
+      setShowQris(true);
+      return;
+    }
+    processPayment();
   };
 
   const handlePrint = (type: ReceiptType) => {
     if (!lastTx) return;
     printByType(type, lastTx, settings);
+  };
+
+  const sendWaReceipt = () => {
+    if (!lastTx) return;
+    const phone = lastTx.customerPhone || customerPhone;
+    if (!phone) return alert("Nomor HP customer belum diisi");
+    window.open(waLink(phone, buildReceiptText(lastTx, settings)), "_blank");
+  };
+
+  const createPaymentLink = () => {
+    if (!lastTx) return;
+    const link = {
+      id: shortId("PL"),
+      customer: lastTx.customer,
+      amount: lastTx.total,
+      description: `Invoice ${lastTx.id}`,
+      createdAt: new Date().toISOString(),
+      status: "pending" as const,
+      refTxId: lastTx.id,
+    };
+    setPaymentLinks([link, ...paymentLinks]);
+    const url = `${window.location.origin}/pay/${link.id}`;
+    setGeneratedLink(url);
+    navigator.clipboard?.writeText(url).catch(() => {});
   };
 
   return (
