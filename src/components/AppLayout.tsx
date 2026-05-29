@@ -1,20 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
-  Home,
-  ShoppingCart,
-  History,
-  Package,
-  Settings as SettingsIcon,
-  BarChart3,
-  Wallet,
-  Users,
-  BookOpen,
-  Store,
-  Wifi,
-  WifiOff,
+  Home, ShoppingCart, History, Package, Settings as SettingsIcon,
+  BarChart3, Wallet, Users, BookOpen, Store, Wifi, WifiOff, LogIn, LogOut,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useStoreSettings, useTransactions, formatCurrency } from "@/lib/nota-store";
+import { useAuth } from "@/lib/auth-context";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: Home },
@@ -93,6 +84,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
             <p>Hari ini</p>
             <p className="text-white font-semibold text-sm">{formatCurrency(todayTotal)}</p>
             <p>{todayTxs.length} transaksi</p>
+            <UserBox />
           </div>
         </aside>
 
@@ -127,6 +119,26 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </main>
         </div>
       </div>
+    </div>
+  );
+}
+
+function UserBox() {
+  const { user, roles, signOut } = useAuth();
+  if (!user) {
+    return (
+      <Link to="/login" className="mt-3 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-3 py-2 text-xs font-medium">
+        <LogIn className="h-3.5 w-3.5" /> Masuk / Daftar
+      </Link>
+    );
+  }
+  return (
+    <div className="mt-3 border-t border-slate-800 pt-3">
+      <p className="text-white text-xs font-medium truncate">{user.email}</p>
+      <p className="text-[10px] text-blue-300 uppercase">{roles[0] ?? "user"}</p>
+      <button onClick={signOut} className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-300 hover:text-white">
+        <LogOut className="h-3 w-3" /> Keluar
+      </button>
     </div>
   );
 }
