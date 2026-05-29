@@ -14,6 +14,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProductsRouteImport } from './routes/products'
 import { Route as MembersRouteImport } from './routes/members'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as KasbonRouteImport } from './routes/kasbon'
 import { Route as HistoryRouteImport } from './routes/history'
@@ -44,6 +45,11 @@ const ProductsRoute = ProductsRouteImport.update({
 const MembersRoute = MembersRouteImport.update({
   id: '/members',
   path: '/members',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LedgerRoute = LedgerRouteImport.update({
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/history': typeof HistoryRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
+  '/login': typeof LoginRoute
   '/members': typeof MembersRoute
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/history': typeof HistoryRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
+  '/login': typeof LoginRoute
   '/members': typeof MembersRoute
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/history': typeof HistoryRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
+  '/login': typeof LoginRoute
   '/members': typeof MembersRoute
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/kasbon'
     | '/ledger'
+    | '/login'
     | '/members'
     | '/products'
     | '/reports'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/kasbon'
     | '/ledger'
+    | '/login'
     | '/members'
     | '/products'
     | '/reports'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/history'
     | '/kasbon'
     | '/ledger'
+    | '/login'
     | '/members'
     | '/products'
     | '/reports'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   HistoryRoute: typeof HistoryRoute
   KasbonRoute: typeof KasbonRoute
   LedgerRoute: typeof LedgerRoute
+  LoginRoute: typeof LoginRoute
   MembersRoute: typeof MembersRoute
   ProductsRoute: typeof ProductsRoute
   ReportsRoute: typeof ReportsRoute
@@ -208,6 +221,13 @@ declare module '@tanstack/react-router' {
       path: '/members'
       fullPath: '/members'
       preLoaderRoute: typeof MembersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ledger': {
@@ -261,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   HistoryRoute: HistoryRoute,
   KasbonRoute: KasbonRoute,
   LedgerRoute: LedgerRoute,
+  LoginRoute: LoginRoute,
   MembersRoute: MembersRoute,
   ProductsRoute: ProductsRoute,
   ReportsRoute: ReportsRoute,
@@ -271,3 +292,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
