@@ -74,6 +74,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_email_available: { Args: { _email: string }; Returns: boolean }
+      is_store_name_available: { Args: { _name: string }; Returns: boolean }
     }
     Enums: {
       app_role: "owner" | "manajer" | "kasir"
