@@ -237,3 +237,13 @@ function Stat({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+function PLBox({ label, value, color }: { label: string; value: string; color: string }) {
+  return (
+    <div className="bg-slate-50 rounded-lg p-3">
+      <p className="text-xs text-slate-600">{label}</p>
+      <p className={`text-base font-bold mt-1 truncate ${color}`}>{value}</p>
+    </div>
+  );
+}
+
