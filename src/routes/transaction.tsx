@@ -401,9 +401,36 @@ function KasirPage() {
                 onClick={() => handlePrint("invoice")}
               />
             </div>
+
+            <div className="mt-4 border-t border-slate-100 pt-4 space-y-2">
+              <p className="text-xs font-medium text-slate-600">Kirim e-Struk / Tagihan</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={sendWaReceipt}
+                  className="flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg text-xs font-semibold"
+                >
+                  <MessageCircle className="h-4 w-4" /> Kirim WA
+                </button>
+                <button
+                  onClick={createPaymentLink}
+                  className="flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg text-xs font-semibold"
+                >
+                  <Link2 className="h-4 w-4" /> Payment Link
+                </button>
+              </div>
+              {generatedLink && (
+                <div className="bg-indigo-50 border border-indigo-200 rounded p-2 text-xs">
+                  <p className="text-indigo-900 font-medium mb-1">Link disalin ke clipboard:</p>
+                  <a href={generatedLink} target="_blank" rel="noreferrer" className="text-indigo-700 break-all underline">
+                    {generatedLink}
+                  </a>
+                </div>
+              )}
+            </div>
+
             <div className="grid grid-cols-2 gap-2 mt-4">
               <button
-                onClick={() => setShowReceipt(false)}
+                onClick={() => { setShowReceipt(false); setGeneratedLink(null); }}
                 className="bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 rounded-lg text-sm font-medium"
               >
                 Tutup
@@ -423,6 +450,59 @@ function KasirPage() {
           </div>
         </div>
       )}
+
+      {/* QRIS dynamic modal */}
+      {showQris && (
+        <div
+          className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50"
+          onClick={() => setShowQris(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-sm w-full p-6 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-start mb-2">
+              <h2 className="text-lg font-bold text-slate-900">Scan QRIS</h2>
+              <button onClick={() => setShowQris(false)} className="text-slate-400 hover:text-slate-700">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <p className="text-sm text-slate-600 mb-3">{settings.qrisMerchantName || settings.storeName}</p>
+            <div className="bg-slate-50 rounded-lg p-3 inline-block">
+              <img
+                src={qrImageUrl(
+                  buildQrisPayload(
+                    settings.qrisMerchantName || settings.storeName,
+                    total,
+                    `TMP-${Date.now()}`,
+                    settings.qrisStaticPayload,
+                  ),
+                  220,
+                )}
+                alt="QRIS"
+                className="w-[220px] h-[220px]"
+              />
+            </div>
+            <p className="text-2xl font-bold text-blue-600 mt-3">{formatCurrency(total)}</p>
+            <p className="text-xs text-slate-500 mt-1">QRIS dinamis · nominal otomatis</p>
+            <div className="grid grid-cols-2 gap-2 mt-5">
+              <button
+                onClick={() => setShowQris(false)}
+                className="bg-slate-200 hover:bg-slate-300 text-slate-700 py-2.5 rounded-lg text-sm font-medium"
+              >
+                Batal
+              </button>
+              <button
+                onClick={processPayment}
+                className="bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg text-sm font-semibold"
+              >
+                Sudah Dibayar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </AppLayout>
   );
 }
