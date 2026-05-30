@@ -223,8 +223,15 @@ function KasirPage() {
             value={customer}
             onChange={(e) => setCustomer(e.target.value)}
             placeholder="Nama Customer (opsional)"
+            className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm mb-2"
+          />
+          <input
+            value={customerPhone}
+            onChange={(e) => setCustomerPhone(e.target.value)}
+            placeholder="No. HP (untuk WA / e-struk)"
             className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm mb-4"
           />
+
 
           <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
             {items.length === 0 && (
