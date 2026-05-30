@@ -13,7 +13,9 @@ type Period = "today" | "7d" | "30d" | "all";
 
 function ReportsPage() {
   const [transactions] = useTransactions();
+  const [settings] = useStoreSettings();
   const [period, setPeriod] = useState<Period>("7d");
+
 
   const filtered = useMemo(() => {
     const now = new Date();
