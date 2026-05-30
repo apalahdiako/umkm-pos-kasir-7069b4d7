@@ -130,6 +130,44 @@ function ReportsPage() {
         <Stat label="Rata-rata / Transaksi" value={formatCurrency(avg)} />
       </section>
 
+      {/* Laba/Rugi Cerdas */}
+      {(() => {
+        const omset = totalSum;
+        const hpp = filtered.reduce((s, t) => s + (t.hppTotal || 0), 0);
+        const labaKotor = omset - hpp;
+        const days = period === "today" ? 1 : period === "7d" ? 7 : period === "30d" ? 30 : Math.max(1, filtered.length ? Math.ceil((Date.now() - new Date(filtered[filtered.length - 1].date).getTime()) / 86400000) : 1);
+        const fixedCost = (settings.dailyRent + settings.dailyUtilities) * days;
+        const labaBersih = labaKotor - fixedCost;
+        const margin = omset > 0 ? (labaBersih / omset) * 100 : 0;
+        return (
+          <section className="bg-white rounded-lg shadow-md p-5 mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-semibold text-slate-900">Laba / Rugi Cerdas</h2>
+              <span className="text-xs text-slate-500">Periode {days} hari</span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
+              <PLBox label="Omset Kotor" value={formatCurrency(omset)} color="text-slate-900" />
+              <PLBox label="HPP" value={`- ${formatCurrency(hpp)}`} color="text-orange-600" />
+              <PLBox label="Laba Kotor" value={formatCurrency(labaKotor)} color="text-blue-600" />
+              <PLBox label={`Sewa+Listrik (${days}h)`} value={`- ${formatCurrency(fixedCost)}`} color="text-orange-600" />
+              <PLBox
+                label="Laba Bersih"
+                value={formatCurrency(labaBersih)}
+                color={labaBersih >= 0 ? "text-green-600" : "text-red-600"}
+              />
+            </div>
+            <p className="text-xs text-slate-500 mt-3">
+              Margin bersih: <b className={labaBersih >= 0 ? "text-green-700" : "text-red-700"}>{margin.toFixed(1)}%</b>
+              {(settings.dailyRent + settings.dailyUtilities) === 0 && (
+                <span className="ml-2 text-amber-600">· Atur biaya harian di Pengaturan untuk laba bersih akurat</span>
+              )}
+            </p>
+          </section>
+        );
+      })()}
+
+
+
       <section className="bg-white rounded-lg shadow-md p-5 mb-6">
         <h2 className="font-semibold text-slate-900 mb-4">Grafik Penjualan</h2>
         {chartData.every(([, v]) => v === 0) ? (
