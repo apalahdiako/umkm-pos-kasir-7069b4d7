@@ -352,11 +352,12 @@ function KasirPage() {
               Batal
             </button>
             <button
-              onClick={processPayment}
+              onClick={handlePay}
               className="bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold text-sm"
             >
-              Cetak
+              {payment === "QRIS" ? "Bayar QRIS" : "Bayar & Cetak"}
             </button>
+
           </div>
         </aside>
       </div>
