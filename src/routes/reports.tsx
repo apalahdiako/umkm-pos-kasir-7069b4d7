@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Download, Printer } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
-import { formatCurrency, useTransactions } from "@/lib/nota-store";
+import { formatCurrency, useStoreSettings, useTransactions } from "@/lib/nota-store";
 
 export const Route = createFileRoute("/reports")({
   head: () => ({ meta: [{ title: "Laporan — Nota Pro" }] }),
