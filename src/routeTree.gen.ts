@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TransactionRouteImport } from './routes/transaction'
+import { Route as TablesRouteImport } from './routes/tables'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProductsRouteImport } from './routes/products'
@@ -25,6 +26,11 @@ import { Route as PayIdRouteImport } from './routes/pay.$id'
 const TransactionRoute = TransactionRouteImport.update({
   id: '/transaction',
   path: '/transaction',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TablesRoute = TablesRouteImport.update({
+  id: '/tables',
+  path: '/tables',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/tables': typeof TablesRoute
   '/transaction': typeof TransactionRoute
   '/pay/$id': typeof PayIdRoute
 }
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/tables': typeof TablesRoute
   '/transaction': typeof TransactionRoute
   '/pay/$id': typeof PayIdRoute
 }
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/tables': typeof TablesRoute
   '/transaction': typeof TransactionRoute
   '/pay/$id': typeof PayIdRoute
 }
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/reports'
     | '/settings'
+    | '/tables'
     | '/transaction'
     | '/pay/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/reports'
     | '/settings'
+    | '/tables'
     | '/transaction'
     | '/pay/$id'
   id:
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/reports'
     | '/settings'
+    | '/tables'
     | '/transaction'
     | '/pay/$id'
   fileRoutesById: FileRoutesById
@@ -182,6 +194,7 @@ export interface RootRouteChildren {
   ProductsRoute: typeof ProductsRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
+  TablesRoute: typeof TablesRoute
   TransactionRoute: typeof TransactionRoute
   PayIdRoute: typeof PayIdRoute
 }
@@ -193,6 +206,13 @@ declare module '@tanstack/react-router' {
       path: '/transaction'
       fullPath: '/transaction'
       preLoaderRoute: typeof TransactionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tables': {
+      id: '/tables'
+      path: '/tables'
+      fullPath: '/tables'
+      preLoaderRoute: typeof TablesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -286,9 +306,20 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsRoute: ProductsRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
+  TablesRoute: TablesRoute,
   TransactionRoute: TransactionRoute,
   PayIdRoute: PayIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
