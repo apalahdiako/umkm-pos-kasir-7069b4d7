@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TransactionRouteImport } from './routes/transaction'
+import { Route as TablesRouteImport } from './routes/tables'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProductsRouteImport } from './routes/products'
@@ -17,6 +18,7 @@ import { Route as MembersRouteImport } from './routes/members'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as KasbonRouteImport } from './routes/kasbon'
+import { Route as InvoicesRouteImport } from './routes/invoices'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as IndexRouteImport } from './routes/index'
@@ -25,6 +27,11 @@ import { Route as PayIdRouteImport } from './routes/pay.$id'
 const TransactionRoute = TransactionRouteImport.update({
   id: '/transaction',
   path: '/transaction',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TablesRoute = TablesRouteImport.update({
+  id: '/tables',
+  path: '/tables',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -62,6 +69,11 @@ const KasbonRoute = KasbonRouteImport.update({
   path: '/kasbon',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InvoicesRoute = InvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HistoryRoute = HistoryRouteImport.update({
   id: '/history',
   path: '/history',
@@ -87,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/history': typeof HistoryRoute
+  '/invoices': typeof InvoicesRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
@@ -94,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/tables': typeof TablesRoute
   '/transaction': typeof TransactionRoute
   '/pay/$id': typeof PayIdRoute
 }
@@ -101,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/history': typeof HistoryRoute
+  '/invoices': typeof InvoicesRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
@@ -108,6 +123,7 @@ export interface FileRoutesByTo {
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/tables': typeof TablesRoute
   '/transaction': typeof TransactionRoute
   '/pay/$id': typeof PayIdRoute
 }
@@ -116,6 +132,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/history': typeof HistoryRoute
+  '/invoices': typeof InvoicesRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
@@ -123,6 +140,7 @@ export interface FileRoutesById {
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
+  '/tables': typeof TablesRoute
   '/transaction': typeof TransactionRoute
   '/pay/$id': typeof PayIdRoute
 }
@@ -132,6 +150,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog'
     | '/history'
+    | '/invoices'
     | '/kasbon'
     | '/ledger'
     | '/login'
@@ -139,6 +158,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/reports'
     | '/settings'
+    | '/tables'
     | '/transaction'
     | '/pay/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -146,6 +166,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog'
     | '/history'
+    | '/invoices'
     | '/kasbon'
     | '/ledger'
     | '/login'
@@ -153,6 +174,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/reports'
     | '/settings'
+    | '/tables'
     | '/transaction'
     | '/pay/$id'
   id:
@@ -160,6 +182,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog'
     | '/history'
+    | '/invoices'
     | '/kasbon'
     | '/ledger'
     | '/login'
@@ -167,6 +190,7 @@ export interface FileRouteTypes {
     | '/products'
     | '/reports'
     | '/settings'
+    | '/tables'
     | '/transaction'
     | '/pay/$id'
   fileRoutesById: FileRoutesById
@@ -175,6 +199,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CatalogRoute: typeof CatalogRoute
   HistoryRoute: typeof HistoryRoute
+  InvoicesRoute: typeof InvoicesRoute
   KasbonRoute: typeof KasbonRoute
   LedgerRoute: typeof LedgerRoute
   LoginRoute: typeof LoginRoute
@@ -182,6 +207,7 @@ export interface RootRouteChildren {
   ProductsRoute: typeof ProductsRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
+  TablesRoute: typeof TablesRoute
   TransactionRoute: typeof TransactionRoute
   PayIdRoute: typeof PayIdRoute
 }
@@ -193,6 +219,13 @@ declare module '@tanstack/react-router' {
       path: '/transaction'
       fullPath: '/transaction'
       preLoaderRoute: typeof TransactionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tables': {
+      id: '/tables'
+      path: '/tables'
+      fullPath: '/tables'
+      preLoaderRoute: typeof TablesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -244,6 +277,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KasbonRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/invoices': {
+      id: '/invoices'
+      path: '/invoices'
+      fullPath: '/invoices'
+      preLoaderRoute: typeof InvoicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/history': {
       id: '/history'
       path: '/history'
@@ -279,6 +319,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CatalogRoute: CatalogRoute,
   HistoryRoute: HistoryRoute,
+  InvoicesRoute: InvoicesRoute,
   KasbonRoute: KasbonRoute,
   LedgerRoute: LedgerRoute,
   LoginRoute: LoginRoute,
@@ -286,6 +327,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsRoute: ProductsRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
+  TablesRoute: TablesRoute,
   TransactionRoute: TransactionRoute,
   PayIdRoute: PayIdRoute,
 }

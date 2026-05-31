@@ -14,6 +14,125 @@ export type Database = {
   }
   public: {
     Tables: {
+      invoices: {
+        Row: {
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          discount: number
+          due_date: string | null
+          id: string
+          invoice_no: string
+          issue_date: string
+          items: Json
+          notes: string | null
+          owner_id: string
+          paid_at: string | null
+          payment_method: string | null
+          status: string
+          subtotal: number
+          tax: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          discount?: number
+          due_date?: string | null
+          id?: string
+          invoice_no: string
+          issue_date?: string
+          items?: Json
+          notes?: string | null
+          owner_id: string
+          paid_at?: string | null
+          payment_method?: string | null
+          status?: string
+          subtotal?: number
+          tax?: number
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          discount?: number
+          due_date?: string | null
+          id?: string
+          invoice_no?: string
+          issue_date?: string
+          items?: Json
+          notes?: string | null
+          owner_id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          status?: string
+          subtotal?: number
+          tax?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      open_bills: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          id: string
+          items: Json
+          notes: string | null
+          opened_at: string
+          owner_id: string
+          status: string
+          subtotal: number
+          table_id: string | null
+          table_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          items?: Json
+          notes?: string | null
+          opened_at?: string
+          owner_id: string
+          status?: string
+          subtotal?: number
+          table_id?: string | null
+          table_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          items?: Json
+          notes?: string | null
+          opened_at?: string
+          owner_id?: string
+          status?: string
+          subtotal?: number
+          table_id?: string | null
+          table_name?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "open_bills_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -37,6 +156,36 @@ export type Database = {
           full_name?: string | null
           id?: string
           store_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tables: {
+        Row: {
+          capacity: number
+          created_at: string
+          id: string
+          name: string
+          owner_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          capacity?: number
+          created_at?: string
+          id?: string
+          name: string
+          owner_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          capacity?: number
+          created_at?: string
+          id?: string
+          name?: string
+          owner_id?: string
+          status?: string
           updated_at?: string
         }
         Relationships: []

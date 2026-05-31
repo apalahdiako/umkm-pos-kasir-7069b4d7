@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Home, ShoppingCart, History, Package, Settings as SettingsIcon,
   BarChart3, Wallet, Users, BookOpen, Store, Wifi, WifiOff, LogIn, LogOut,
+  Utensils, FileText,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useStoreSettings, useTransactions, formatCurrency } from "@/lib/nota-store";
@@ -10,6 +11,8 @@ import { useAuth } from "@/lib/auth-context";
 const nav = [
   { to: "/", label: "Dashboard", icon: Home },
   { to: "/transaction", label: "Kasir (POS)", icon: ShoppingCart },
+  { to: "/tables", label: "Meja (F&B)", icon: Utensils },
+  { to: "/invoices", label: "Invoice B2B", icon: FileText },
   { to: "/history", label: "Riwayat", icon: History },
   { to: "/products", label: "Produk", icon: Package },
   { to: "/ledger", label: "Mutasi Saldo", icon: Wallet },
@@ -19,6 +22,7 @@ const nav = [
   { to: "/catalog", label: "Toko Online", icon: Store },
   { to: "/settings", label: "Pengaturan", icon: SettingsIcon },
 ] as const;
+
 
 function useOnline() {
   const [online, setOnline] = useState(true);
