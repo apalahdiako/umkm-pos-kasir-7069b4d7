@@ -1,9 +1,11 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, X, Download, MessageCircle, Trash2, FileText } from "lucide-react";
+import { Plus, X, Download, MessageCircle, Trash2, FileText, Image as ImageIcon } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { formatCurrency, useStoreSettings, waLink, printInvoice } from "@/lib/nota-store";
+import { DocumentActions } from "@/components/DocumentActions";
+import type { DocData } from "@/components/DocumentImage";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/invoices")({
@@ -49,6 +51,7 @@ function InvoicesPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Status | "ALL">("ALL");
   const [editing, setEditing] = useState<Invoice | "new" | null>(null);
+  const [shareDoc, setShareDoc] = useState<DocData | null>(null);
   const [settings] = useStoreSettings();
 
   const load = async () => {
@@ -101,13 +104,32 @@ function InvoicesPage() {
   const send = async (inv: Invoice) => {
     if (inv.status === "DRAFT") {
       await supabase.from("invoices").update({ status: "OUTSTANDING" }).eq("id", inv.id);
-      toast.success("Invoice dikirim, status OUTSTANDING");
+      toast.success("Status diubah jadi OUTSTANDING");
       load();
     }
     if (inv.customer_phone) {
       const msg = `Halo ${inv.customer_name}, berikut invoice *${inv.invoice_no}* dari ${settings.storeName}\nTotal: ${formatCurrency(Number(inv.total))}\nJatuh tempo: ${inv.due_date || "-"}\nTerima kasih.`;
       window.open(waLink(inv.customer_phone, msg), "_blank");
     }
+  };
+
+  const openShare = (inv: Invoice) => {
+    setShareDoc({
+      type: "Invoice",
+      docNo: inv.invoice_no,
+      date: inv.issue_date,
+      customerName: inv.customer_name,
+      customerPhone: inv.customer_phone || undefined,
+      customerEmail: inv.customer_email || undefined,
+      items: inv.items,
+      subtotal: Number(inv.subtotal),
+      discount: Number(inv.discount),
+      tax: Number(inv.tax),
+      total: Number(inv.total),
+      dueDate: inv.due_date || undefined,
+      status: inv.status,
+      notes: inv.notes || undefined,
+    });
   };
 
   const removeInv = async (inv: Invoice) => {
@@ -177,8 +199,9 @@ function InvoicesPage() {
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${STATUS_COLOR[inv.status]}`}>{inv.status}</span>
                     </td>
                     <td className="p-3 text-right whitespace-nowrap">
+                      <button onClick={() => openShare(inv)} className="text-purple-600 mr-2" title="Kirim sebagai Gambar"><ImageIcon className="h-4 w-4 inline" /></button>
                       <button onClick={() => printInvoiceFromRow(inv, settings)} className="text-blue-600 mr-2" title="Print"><FileText className="h-4 w-4 inline" /></button>
-                      <button onClick={() => send(inv)} className="text-green-600 mr-2" title="Kirim WA"><MessageCircle className="h-4 w-4 inline" /></button>
+                      <button onClick={() => send(inv)} className="text-green-600 mr-2" title="Kirim WA (teks)"><MessageCircle className="h-4 w-4 inline" /></button>
                       {inv.status !== "PAID" && (
                         <button onClick={() => markPaid(inv)} className="text-xs text-green-700 mr-2 hover:underline">Lunas</button>
                       )}
@@ -195,6 +218,10 @@ function InvoicesPage() {
 
       {editing && (
         <InvoiceEditor invoice={editing === "new" ? null : editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); load(); }} />
+      )}
+
+      {shareDoc && (
+        <DocumentActions open layout="a4" data={shareDoc} onClose={() => setShareDoc(null)} />
       )}
     </AppLayout>
   );

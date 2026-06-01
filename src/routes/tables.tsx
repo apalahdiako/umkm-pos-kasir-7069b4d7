@@ -1,9 +1,11 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, X, ChefHat, Receipt, Trash2, CheckCircle2 } from "lucide-react";
+import { Plus, X, ChefHat, Receipt, Trash2, CheckCircle2, Image as ImageIcon } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { formatCurrency, useProducts, useStoreSettings, printNota, shortId, type Product } from "@/lib/nota-store";
+import { DocumentActions } from "@/components/DocumentActions";
+import type { DocData } from "@/components/DocumentImage";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/tables")({
@@ -255,6 +257,8 @@ function BillPanel({
     onChanged();
   };
 
+  const [shareDoc, setShareDoc] = useState<DocData | null>(null);
+
   const closeBill = async () => {
     if (items.length === 0) return toast.error("Bill kosong");
     if (!confirm(`Tutup bill ${table.name} — total ${formatCurrency(subtotal)}?`)) return;
@@ -263,18 +267,34 @@ function BillPanel({
     }).eq("id", bill.id);
     await supabase.from("tables").update({ status: "available" }).eq("id", table.id);
 
+    const docNo = shortId("INV");
+    const now = new Date().toISOString();
+
     // Print final receipt
     printNota({
-      id: shortId("INV"),
-      date: new Date().toISOString(),
+      id: docNo,
+      date: now,
       customer: table.name,
       items: items.map((i) => ({ productId: i.productId, name: i.name, price: i.price, qty: i.qty })),
       subtotal, discount: 0, tax: 0, total: subtotal,
       paymentMethod: "Tunai", amountPaid: subtotal, change: 0, status: "completed", tableNo: table.name,
     }, settings);
 
+    // Offer share-as-image
+    setShareDoc({
+      type: "Closed Bill",
+      docNo,
+      date: now,
+      tableNo: table.name,
+      items: items.map((i) => ({ name: i.name, qty: i.qty, price: i.price })),
+      subtotal,
+      total: subtotal,
+      paymentMethod: "Tunai",
+      amountPaid: subtotal,
+      status: "LUNAS",
+    });
+
     toast.success("Bill ditutup, struk dicetak");
-    onClose();
     onChanged();
   };
 
@@ -345,6 +365,21 @@ function BillPanel({
             <button onClick={sendToKitchen} className="flex-1 bg-orange-500 text-white py-2 rounded text-sm font-medium flex items-center justify-center gap-1">
               <ChefHat className="h-4 w-4" /> Kirim ke Dapur
             </button>
+            <button
+              onClick={() => items.length > 0 && setShareDoc({
+                type: "Closed Bill",
+                docNo: shortId("PREV"),
+                date: new Date().toISOString(),
+                tableNo: table.name,
+                items: items.map((i) => ({ name: i.name, qty: i.qty, price: i.price })),
+                subtotal,
+                total: subtotal,
+              })}
+              className="px-3 bg-purple-100 text-purple-700 py-2 rounded text-sm flex items-center justify-center gap-1"
+              title="Kirim preview bill sebagai gambar"
+            >
+              <ImageIcon className="h-4 w-4" />
+            </button>
             <button onClick={closeBill} className="flex-1 bg-green-600 text-white py-2 rounded text-sm font-medium flex items-center justify-center gap-1">
               <Receipt className="h-4 w-4" /> Close Bill
             </button>
@@ -352,6 +387,19 @@ function BillPanel({
           </div>
         </div>
       </div>
+
+      {shareDoc && (
+        <DocumentActions
+          open
+          layout="thermal"
+          data={shareDoc}
+          onClose={() => {
+            setShareDoc(null);
+            // if this was the closed bill (status set), also close the panel
+            if (shareDoc.status === "LUNAS") onClose();
+          }}
+        />
+      )}
     </div>
   );
 }
