@@ -365,6 +365,21 @@ function BillPanel({
             <button onClick={sendToKitchen} className="flex-1 bg-orange-500 text-white py-2 rounded text-sm font-medium flex items-center justify-center gap-1">
               <ChefHat className="h-4 w-4" /> Kirim ke Dapur
             </button>
+            <button
+              onClick={() => items.length > 0 && setShareDoc({
+                type: "Closed Bill",
+                docNo: shortId("PREV"),
+                date: new Date().toISOString(),
+                tableNo: table.name,
+                items: items.map((i) => ({ name: i.name, qty: i.qty, price: i.price })),
+                subtotal,
+                total: subtotal,
+              })}
+              className="px-3 bg-purple-100 text-purple-700 py-2 rounded text-sm flex items-center justify-center gap-1"
+              title="Kirim preview bill sebagai gambar"
+            >
+              <ImageIcon className="h-4 w-4" />
+            </button>
             <button onClick={closeBill} className="flex-1 bg-green-600 text-white py-2 rounded text-sm font-medium flex items-center justify-center gap-1">
               <Receipt className="h-4 w-4" /> Close Bill
             </button>
@@ -372,6 +387,19 @@ function BillPanel({
           </div>
         </div>
       </div>
+
+      {shareDoc && (
+        <DocumentActions
+          open
+          layout="thermal"
+          data={shareDoc}
+          onClose={() => {
+            setShareDoc(null);
+            // if this was the closed bill (status set), also close the panel
+            if (shareDoc.status === "LUNAS") onClose();
+          }}
+        />
+      )}
     </div>
   );
 }
