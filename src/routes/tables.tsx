@@ -1,9 +1,11 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, X, ChefHat, Receipt, Trash2, CheckCircle2 } from "lucide-react";
+import { Plus, X, ChefHat, Receipt, Trash2, CheckCircle2, Image as ImageIcon } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { formatCurrency, useProducts, useStoreSettings, printNota, shortId, type Product } from "@/lib/nota-store";
+import { DocumentActions } from "@/components/DocumentActions";
+import type { DocData } from "@/components/DocumentImage";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/tables")({
@@ -255,6 +257,8 @@ function BillPanel({
     onChanged();
   };
 
+  const [shareDoc, setShareDoc] = useState<DocData | null>(null);
+
   const closeBill = async () => {
     if (items.length === 0) return toast.error("Bill kosong");
     if (!confirm(`Tutup bill ${table.name} — total ${formatCurrency(subtotal)}?`)) return;
@@ -263,18 +267,34 @@ function BillPanel({
     }).eq("id", bill.id);
     await supabase.from("tables").update({ status: "available" }).eq("id", table.id);
 
+    const docNo = shortId("INV");
+    const now = new Date().toISOString();
+
     // Print final receipt
     printNota({
-      id: shortId("INV"),
-      date: new Date().toISOString(),
+      id: docNo,
+      date: now,
       customer: table.name,
       items: items.map((i) => ({ productId: i.productId, name: i.name, price: i.price, qty: i.qty })),
       subtotal, discount: 0, tax: 0, total: subtotal,
       paymentMethod: "Tunai", amountPaid: subtotal, change: 0, status: "completed", tableNo: table.name,
     }, settings);
 
+    // Offer share-as-image
+    setShareDoc({
+      type: "Closed Bill",
+      docNo,
+      date: now,
+      tableNo: table.name,
+      items: items.map((i) => ({ name: i.name, qty: i.qty, price: i.price })),
+      subtotal,
+      total: subtotal,
+      paymentMethod: "Tunai",
+      amountPaid: subtotal,
+      status: "LUNAS",
+    });
+
     toast.success("Bill ditutup, struk dicetak");
-    onClose();
     onChanged();
   };
 
