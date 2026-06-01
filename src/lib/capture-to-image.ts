@@ -3,10 +3,7 @@ import { saveAs } from "file-saver";
 import { supabase } from "@/integrations/supabase/client";
 
 export async function captureElement(el: HTMLElement, scale = 2): Promise<HTMLCanvasElement> {
-  // wait for fonts
-  if ((document as Document & { fonts?: { ready: Promise<unknown> } }).fonts?.ready) {
-    await (document as Document & { fonts: { ready: Promise<unknown> } }).fonts.ready;
-  }
+  try { await document.fonts?.ready; } catch { /* ignore */ }
   return html2canvas(el, {
     scale,
     useCORS: true,
