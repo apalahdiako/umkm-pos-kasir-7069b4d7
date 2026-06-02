@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      hpp_products: {
+        Row: {
+          biaya_lain: Json
+          category: string
+          created_at: string
+          description: string | null
+          handling: number
+          harga_beli: number
+          harga_jual: number
+          id: string
+          images: Json
+          is_active: boolean
+          kemasan: number
+          margin_target: number
+          min_stock: number
+          name: string
+          notes: string | null
+          ongkir: number
+          owner_id: string
+          packaging_final: number
+          pajak: number
+          shrinkage: number
+          sku: string
+          stock: number
+          total_hpp: number
+          updated_at: string
+        }
+        Insert: {
+          biaya_lain?: Json
+          category?: string
+          created_at?: string
+          description?: string | null
+          handling?: number
+          harga_beli?: number
+          harga_jual?: number
+          id?: string
+          images?: Json
+          is_active?: boolean
+          kemasan?: number
+          margin_target?: number
+          min_stock?: number
+          name: string
+          notes?: string | null
+          ongkir?: number
+          owner_id: string
+          packaging_final?: number
+          pajak?: number
+          shrinkage?: number
+          sku: string
+          stock?: number
+          total_hpp?: number
+          updated_at?: string
+        }
+        Update: {
+          biaya_lain?: Json
+          category?: string
+          created_at?: string
+          description?: string | null
+          handling?: number
+          harga_beli?: number
+          harga_jual?: number
+          id?: string
+          images?: Json
+          is_active?: boolean
+          kemasan?: number
+          margin_target?: number
+          min_stock?: number
+          name?: string
+          notes?: string | null
+          ongkir?: number
+          owner_id?: string
+          packaging_final?: number
+          pajak?: number
+          shrinkage?: number
+          sku?: string
+          stock?: number
+          total_hpp?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       invoices: {
         Row: {
           created_at: string
@@ -133,6 +214,50 @@ export type Database = {
           },
         ]
       }
+      product_channels: {
+        Row: {
+          channel_name: string
+          created_at: string
+          fee_nominal: number
+          fee_persen: number
+          harga_jual: number
+          id: string
+          owner_id: string
+          product_id: string
+          updated_at: string
+        }
+        Insert: {
+          channel_name: string
+          created_at?: string
+          fee_nominal?: number
+          fee_persen?: number
+          harga_jual?: number
+          id?: string
+          owner_id: string
+          product_id: string
+          updated_at?: string
+        }
+        Update: {
+          channel_name?: string
+          created_at?: string
+          fee_nominal?: number
+          fee_persen?: number
+          harga_jual?: number
+          id?: string
+          owner_id?: string
+          product_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_channels_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "hpp_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -157,6 +282,54 @@ export type Database = {
           id?: string
           store_name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      recipes: {
+        Row: {
+          created_at: string
+          difficulty: string | null
+          hpp_per_porsi: number
+          id: string
+          images: Json
+          ingredients: Json
+          name: string
+          notes: string | null
+          owner_id: string
+          prep_time: number | null
+          total_hpp: number
+          updated_at: string
+          yield_qty: number
+        }
+        Insert: {
+          created_at?: string
+          difficulty?: string | null
+          hpp_per_porsi?: number
+          id?: string
+          images?: Json
+          ingredients?: Json
+          name: string
+          notes?: string | null
+          owner_id: string
+          prep_time?: number | null
+          total_hpp?: number
+          updated_at?: string
+          yield_qty?: number
+        }
+        Update: {
+          created_at?: string
+          difficulty?: string | null
+          hpp_per_porsi?: number
+          id?: string
+          images?: Json
+          ingredients?: Json
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          prep_time?: number | null
+          total_hpp?: number
+          updated_at?: string
+          yield_qty?: number
         }
         Relationships: []
       }
