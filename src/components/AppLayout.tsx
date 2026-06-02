@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Home, ShoppingCart, History, Package, Settings as SettingsIcon,
   BarChart3, Wallet, Users, BookOpen, Store, Wifi, WifiOff, LogIn, LogOut,
-  Utensils, FileText,
+  Utensils, FileText, Calculator,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useStoreSettings, useTransactions, formatCurrency } from "@/lib/nota-store";
@@ -13,6 +13,7 @@ const nav = [
   { to: "/transaction", label: "Kasir (POS)", icon: ShoppingCart },
   { to: "/tables", label: "Meja (F&B)", icon: Utensils },
   { to: "/invoices", label: "Invoice B2B", icon: FileText },
+  { to: "/hpp", label: "HPP Calculator", icon: Calculator },
   { to: "/history", label: "Riwayat", icon: History },
   { to: "/products", label: "Produk", icon: Package },
   { to: "/ledger", label: "Mutasi Saldo", icon: Wallet },
