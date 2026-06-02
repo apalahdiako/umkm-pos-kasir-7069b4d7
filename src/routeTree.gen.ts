@@ -19,6 +19,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as KasbonRouteImport } from './routes/kasbon'
 import { Route as InvoicesRouteImport } from './routes/invoices'
+import { Route as HppRouteImport } from './routes/hpp'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as IndexRouteImport } from './routes/index'
@@ -74,6 +75,11 @@ const InvoicesRoute = InvoicesRouteImport.update({
   path: '/invoices',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HppRoute = HppRouteImport.update({
+  id: '/hpp',
+  path: '/hpp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HistoryRoute = HistoryRouteImport.update({
   id: '/history',
   path: '/history',
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/history': typeof HistoryRoute
+  '/hpp': typeof HppRoute
   '/invoices': typeof InvoicesRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/history': typeof HistoryRoute
+  '/hpp': typeof HppRoute
   '/invoices': typeof InvoicesRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/catalog': typeof CatalogRoute
   '/history': typeof HistoryRoute
+  '/hpp': typeof HppRoute
   '/invoices': typeof InvoicesRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog'
     | '/history'
+    | '/hpp'
     | '/invoices'
     | '/kasbon'
     | '/ledger'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog'
     | '/history'
+    | '/hpp'
     | '/invoices'
     | '/kasbon'
     | '/ledger'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog'
     | '/history'
+    | '/hpp'
     | '/invoices'
     | '/kasbon'
     | '/ledger'
@@ -199,6 +211,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CatalogRoute: typeof CatalogRoute
   HistoryRoute: typeof HistoryRoute
+  HppRoute: typeof HppRoute
   InvoicesRoute: typeof InvoicesRoute
   KasbonRoute: typeof KasbonRoute
   LedgerRoute: typeof LedgerRoute
@@ -284,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvoicesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hpp': {
+      id: '/hpp'
+      path: '/hpp'
+      fullPath: '/hpp'
+      preLoaderRoute: typeof HppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/history': {
       id: '/history'
       path: '/history'
@@ -319,6 +339,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CatalogRoute: CatalogRoute,
   HistoryRoute: HistoryRoute,
+  HppRoute: HppRoute,
   InvoicesRoute: InvoicesRoute,
   KasbonRoute: KasbonRoute,
   LedgerRoute: LedgerRoute,
