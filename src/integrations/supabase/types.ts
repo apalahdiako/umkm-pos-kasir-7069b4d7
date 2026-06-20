@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      disbursements: {
+        Row: {
+          account_number: string
+          amount: number
+          bank_code: string
+          completed_at: string | null
+          created_at: string
+          fee: number
+          flip_id: number | null
+          id: string
+          idempotency_key: string
+          raw: Json | null
+          recipient_name: string | null
+          remark: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_number: string
+          amount: number
+          bank_code: string
+          completed_at?: string | null
+          created_at?: string
+          fee?: number
+          flip_id?: number | null
+          id?: string
+          idempotency_key: string
+          raw?: Json | null
+          recipient_name?: string | null
+          remark?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_number?: string
+          amount?: number
+          bank_code?: string
+          completed_at?: string | null
+          created_at?: string
+          fee?: number
+          flip_id?: number | null
+          id?: string
+          idempotency_key?: string
+          raw?: Json | null
+          recipient_name?: string | null
+          remark?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       hpp_products: {
         Row: {
           biaya_lain: Json
@@ -213,6 +267,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payment_requests: {
+        Row: {
+          amount: number
+          bill_payload: Json | null
+          created_at: string
+          flip_link_id: number | null
+          flip_link_url: string | null
+          id: string
+          paid_at: string | null
+          payment_method: string | null
+          sender_name: string | null
+          status: string
+          step: number
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          bill_payload?: Json | null
+          created_at?: string
+          flip_link_id?: number | null
+          flip_link_url?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          sender_name?: string | null
+          status?: string
+          step?: number
+          title: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          bill_payload?: Json | null
+          created_at?: string
+          flip_link_id?: number | null
+          flip_link_url?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: string | null
+          sender_name?: string | null
+          status?: string
+          step?: number
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       product_channels: {
         Row: {
