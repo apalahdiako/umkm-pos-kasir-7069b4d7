@@ -177,7 +177,7 @@ export const refreshBillStatus = createServerFn({ method: "POST" })
     if (last?.status === "SUCCESSFUL") {
       await context.supabase.from("payment_requests").update({
         status: "PAID", payment_method: last?.sender_bank || last?.payment_method || null,
-        paid_at: new Date().toISOString(), bill_payload: { ...(row.bill_payload || {}), last },
+        paid_at: new Date().toISOString(), bill_payload: { ...((row.bill_payload as any) || {}), last },
       }).eq("id", row.id);
     }
     return { ok: true };
