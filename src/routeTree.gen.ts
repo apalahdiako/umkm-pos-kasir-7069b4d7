@@ -14,6 +14,7 @@ import { Route as TablesRouteImport } from './routes/tables'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProductsRouteImport } from './routes/products'
+import { Route as PaymentsRouteImport } from './routes/payments'
 import { Route as MembersRouteImport } from './routes/members'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LedgerRouteImport } from './routes/ledger'
@@ -24,6 +25,7 @@ import { Route as HistoryRouteImport } from './routes/history'
 import { Route as CatalogRouteImport } from './routes/catalog'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PayIdRouteImport } from './routes/pay.$id'
+import { Route as ApiPublicFlipWebhookRouteImport } from './routes/api/public/flip-webhook'
 
 const TransactionRoute = TransactionRouteImport.update({
   id: '/transaction',
@@ -48,6 +50,11 @@ const ReportsRoute = ReportsRouteImport.update({
 const ProductsRoute = ProductsRouteImport.update({
   id: '/products',
   path: '/products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentsRoute = PaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MembersRoute = MembersRouteImport.update({
@@ -100,6 +107,11 @@ const PayIdRoute = PayIdRouteImport.update({
   path: '/pay/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicFlipWebhookRoute = ApiPublicFlipWebhookRouteImport.update({
+  id: '/api/public/flip-webhook',
+  path: '/api/public/flip-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -111,12 +123,14 @@ export interface FileRoutesByFullPath {
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
   '/members': typeof MembersRoute
+  '/payments': typeof PaymentsRoute
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/tables': typeof TablesRoute
   '/transaction': typeof TransactionRoute
   '/pay/$id': typeof PayIdRoute
+  '/api/public/flip-webhook': typeof ApiPublicFlipWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -128,12 +142,14 @@ export interface FileRoutesByTo {
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
   '/members': typeof MembersRoute
+  '/payments': typeof PaymentsRoute
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/tables': typeof TablesRoute
   '/transaction': typeof TransactionRoute
   '/pay/$id': typeof PayIdRoute
+  '/api/public/flip-webhook': typeof ApiPublicFlipWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -146,12 +162,14 @@ export interface FileRoutesById {
   '/ledger': typeof LedgerRoute
   '/login': typeof LoginRoute
   '/members': typeof MembersRoute
+  '/payments': typeof PaymentsRoute
   '/products': typeof ProductsRoute
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/tables': typeof TablesRoute
   '/transaction': typeof TransactionRoute
   '/pay/$id': typeof PayIdRoute
+  '/api/public/flip-webhook': typeof ApiPublicFlipWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -165,12 +183,14 @@ export interface FileRouteTypes {
     | '/ledger'
     | '/login'
     | '/members'
+    | '/payments'
     | '/products'
     | '/reports'
     | '/settings'
     | '/tables'
     | '/transaction'
     | '/pay/$id'
+    | '/api/public/flip-webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -182,12 +202,14 @@ export interface FileRouteTypes {
     | '/ledger'
     | '/login'
     | '/members'
+    | '/payments'
     | '/products'
     | '/reports'
     | '/settings'
     | '/tables'
     | '/transaction'
     | '/pay/$id'
+    | '/api/public/flip-webhook'
   id:
     | '__root__'
     | '/'
@@ -199,12 +221,14 @@ export interface FileRouteTypes {
     | '/ledger'
     | '/login'
     | '/members'
+    | '/payments'
     | '/products'
     | '/reports'
     | '/settings'
     | '/tables'
     | '/transaction'
     | '/pay/$id'
+    | '/api/public/flip-webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -217,12 +241,14 @@ export interface RootRouteChildren {
   LedgerRoute: typeof LedgerRoute
   LoginRoute: typeof LoginRoute
   MembersRoute: typeof MembersRoute
+  PaymentsRoute: typeof PaymentsRoute
   ProductsRoute: typeof ProductsRoute
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
   TablesRoute: typeof TablesRoute
   TransactionRoute: typeof TransactionRoute
   PayIdRoute: typeof PayIdRoute
+  ApiPublicFlipWebhookRoute: typeof ApiPublicFlipWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -260,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/products'
       fullPath: '/products'
       preLoaderRoute: typeof ProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payments': {
+      id: '/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof PaymentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/members': {
@@ -332,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PayIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/flip-webhook': {
+      id: '/api/public/flip-webhook'
+      path: '/api/public/flip-webhook'
+      fullPath: '/api/public/flip-webhook'
+      preLoaderRoute: typeof ApiPublicFlipWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -345,12 +385,14 @@ const rootRouteChildren: RootRouteChildren = {
   LedgerRoute: LedgerRoute,
   LoginRoute: LoginRoute,
   MembersRoute: MembersRoute,
+  PaymentsRoute: PaymentsRoute,
   ProductsRoute: ProductsRoute,
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
   TablesRoute: TablesRoute,
   TransactionRoute: TransactionRoute,
   PayIdRoute: PayIdRoute,
+  ApiPublicFlipWebhookRoute: ApiPublicFlipWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
