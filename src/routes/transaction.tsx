@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Plus, Trash2, Minus, Search, Receipt, FileText, Mail, X, MessageCircle, Link2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Plus, Trash2, Minus, Search, Receipt, FileText, Mail, X, MessageCircle, Link2, Wallet } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import {
   buildQrisPayload, buildReceiptText, calcHppTotal, formatCurrency, generateInvoiceId,
@@ -8,6 +8,8 @@ import {
   useProducts, useStoreSettings, useTransactions, waLink,
   type CartItem, type PaymentMethod, type ReceiptType, type Transaction,
 } from "@/lib/nota-store";
+import { useServerFn } from "@tanstack/react-start";
+import { getDanaProfile, type DanaProfile } from "@/lib/dana.functions";
 
 export const Route = createFileRoute("/transaction")({
   head: () => ({ meta: [{ title: "Kasir — Nota Pro" }] }),
@@ -32,6 +34,10 @@ function KasirPage() {
   const [lastTx, setLastTx] = useState<Transaction | null>(null);
   const [showReceipt, setShowReceipt] = useState(false);
   const [showQris, setShowQris] = useState(false);
+  const [showDana, setShowDana] = useState(false);
+  const [dana, setDana] = useState<DanaProfile | null>(null);
+  const fetchDana = useServerFn(getDanaProfile);
+  useEffect(() => { fetchDana().then(setDana).catch(() => setDana(null)); }, [fetchDana]);
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
 
   const categories = useMemo(() => {
