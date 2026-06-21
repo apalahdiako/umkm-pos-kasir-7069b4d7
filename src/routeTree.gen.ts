@@ -20,9 +20,13 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LedgerRouteImport } from './routes/ledger'
 import { Route as KasbonRouteImport } from './routes/kasbon'
 import { Route as InvoicesRouteImport } from './routes/invoices'
+import { Route as InventoryRouteImport } from './routes/inventory'
 import { Route as HppRouteImport } from './routes/hpp'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as EmployeesRouteImport } from './routes/employees'
+import { Route as CrmRouteImport } from './routes/crm'
 import { Route as CatalogRouteImport } from './routes/catalog'
+import { Route as AccountingRouteImport } from './routes/accounting'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PayIdRouteImport } from './routes/pay.$id'
 import { Route as ApiPublicFlipWebhookRouteImport } from './routes/api/public/flip-webhook'
@@ -82,6 +86,11 @@ const InvoicesRoute = InvoicesRouteImport.update({
   path: '/invoices',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InventoryRoute = InventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HppRoute = HppRouteImport.update({
   id: '/hpp',
   path: '/hpp',
@@ -92,9 +101,24 @@ const HistoryRoute = HistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployeesRoute = EmployeesRouteImport.update({
+  id: '/employees',
+  path: '/employees',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrmRoute = CrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CatalogRoute = CatalogRouteImport.update({
   id: '/catalog',
   path: '/catalog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountingRoute = AccountingRouteImport.update({
+  id: '/accounting',
+  path: '/accounting',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -115,9 +139,13 @@ const ApiPublicFlipWebhookRoute = ApiPublicFlipWebhookRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/accounting': typeof AccountingRoute
   '/catalog': typeof CatalogRoute
+  '/crm': typeof CrmRoute
+  '/employees': typeof EmployeesRoute
   '/history': typeof HistoryRoute
   '/hpp': typeof HppRoute
+  '/inventory': typeof InventoryRoute
   '/invoices': typeof InvoicesRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
@@ -134,9 +162,13 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/accounting': typeof AccountingRoute
   '/catalog': typeof CatalogRoute
+  '/crm': typeof CrmRoute
+  '/employees': typeof EmployeesRoute
   '/history': typeof HistoryRoute
   '/hpp': typeof HppRoute
+  '/inventory': typeof InventoryRoute
   '/invoices': typeof InvoicesRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
@@ -154,9 +186,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/accounting': typeof AccountingRoute
   '/catalog': typeof CatalogRoute
+  '/crm': typeof CrmRoute
+  '/employees': typeof EmployeesRoute
   '/history': typeof HistoryRoute
   '/hpp': typeof HppRoute
+  '/inventory': typeof InventoryRoute
   '/invoices': typeof InvoicesRoute
   '/kasbon': typeof KasbonRoute
   '/ledger': typeof LedgerRoute
@@ -175,9 +211,13 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/accounting'
     | '/catalog'
+    | '/crm'
+    | '/employees'
     | '/history'
     | '/hpp'
+    | '/inventory'
     | '/invoices'
     | '/kasbon'
     | '/ledger'
@@ -194,9 +234,13 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/accounting'
     | '/catalog'
+    | '/crm'
+    | '/employees'
     | '/history'
     | '/hpp'
+    | '/inventory'
     | '/invoices'
     | '/kasbon'
     | '/ledger'
@@ -213,9 +257,13 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/accounting'
     | '/catalog'
+    | '/crm'
+    | '/employees'
     | '/history'
     | '/hpp'
+    | '/inventory'
     | '/invoices'
     | '/kasbon'
     | '/ledger'
@@ -233,9 +281,13 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountingRoute: typeof AccountingRoute
   CatalogRoute: typeof CatalogRoute
+  CrmRoute: typeof CrmRoute
+  EmployeesRoute: typeof EmployeesRoute
   HistoryRoute: typeof HistoryRoute
   HppRoute: typeof HppRoute
+  InventoryRoute: typeof InventoryRoute
   InvoicesRoute: typeof InvoicesRoute
   KasbonRoute: typeof KasbonRoute
   LedgerRoute: typeof LedgerRoute
@@ -330,6 +382,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InvoicesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/inventory': {
+      id: '/inventory'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof InventoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hpp': {
       id: '/hpp'
       path: '/hpp'
@@ -344,11 +403,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employees': {
+      id: '/employees'
+      path: '/employees'
+      fullPath: '/employees'
+      preLoaderRoute: typeof EmployeesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crm': {
+      id: '/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof CrmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/catalog': {
       id: '/catalog'
       path: '/catalog'
       fullPath: '/catalog'
       preLoaderRoute: typeof CatalogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/accounting': {
+      id: '/accounting'
+      path: '/accounting'
+      fullPath: '/accounting'
+      preLoaderRoute: typeof AccountingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -377,9 +457,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountingRoute: AccountingRoute,
   CatalogRoute: CatalogRoute,
+  CrmRoute: CrmRoute,
+  EmployeesRoute: EmployeesRoute,
   HistoryRoute: HistoryRoute,
   HppRoute: HppRoute,
+  InventoryRoute: InventoryRoute,
   InvoicesRoute: InvoicesRoute,
   KasbonRoute: KasbonRoute,
   LedgerRoute: LedgerRoute,
