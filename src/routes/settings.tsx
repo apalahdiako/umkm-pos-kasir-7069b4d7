@@ -1,15 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Upload, Trash2 } from "lucide-react";
+import { Upload, Trash2, Wallet, CheckCircle2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { useStoreSettings, type PaymentMethod } from "@/lib/nota-store";
+import { useServerFn } from "@tanstack/react-start";
+import { getDanaProfile, updateDanaProfile, type DanaProfile } from "@/lib/dana.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [{ title: "Pengaturan — Nota Pro" }] }),
   component: SettingsPage,
 });
 
-const ALL_METHODS: PaymentMethod[] = ["Tunai", "Kartu", "Transfer", "QRIS"];
+const ALL_METHODS: PaymentMethod[] = ["Tunai", "Kartu", "Transfer", "QRIS", "DANA"];
 
 function SettingsPage() {
   const [settings, setSettings] = useStoreSettings();
@@ -153,6 +156,9 @@ function SettingsPage() {
             ))}
           </div>
         </Card>
+
+        <DanaCard />
+
 
         {/* RECEIPT */}
         <Card title="Kustomisasi Struk">
