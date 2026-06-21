@@ -1,15 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Upload, Trash2 } from "lucide-react";
+import { Upload, Trash2, Wallet, CheckCircle2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { useStoreSettings, type PaymentMethod } from "@/lib/nota-store";
+import { useServerFn } from "@tanstack/react-start";
+import { getDanaProfile, updateDanaProfile, type DanaProfile } from "@/lib/dana.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({ meta: [{ title: "Pengaturan — Nota Pro" }] }),
   component: SettingsPage,
 });
 
-const ALL_METHODS: PaymentMethod[] = ["Tunai", "Kartu", "Transfer", "QRIS"];
+const ALL_METHODS: PaymentMethod[] = ["Tunai", "Kartu", "Transfer", "QRIS", "DANA"];
 
 function SettingsPage() {
   const [settings, setSettings] = useStoreSettings();
@@ -154,6 +157,9 @@ function SettingsPage() {
           </div>
         </Card>
 
+        <DanaCard />
+
+
         {/* RECEIPT */}
         <Card title="Kustomisasi Struk">
           <label className="flex items-center gap-3 mb-2">
@@ -222,3 +228,151 @@ function Input({ value, onChange }: { value: string; onChange: (v: string) => vo
     />
   );
 }
+
+function DanaCard() {
+  const fetchDana = useServerFn(getDanaProfile);
+  const saveDana = useServerFn(updateDanaProfile);
+  const [state, setState] = useState<DanaProfile>({
+    dana_number: "",
+    dana_holder_name: "",
+    dana_qr_url: "",
+    dana_active: false,
+  });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [savedMsg, setSavedMsg] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetchDana()
+      .then((d) =>
+        setState({
+          dana_number: d.dana_number ?? "",
+          dana_holder_name: d.dana_holder_name ?? "",
+          dana_qr_url: d.dana_qr_url ?? "",
+          dana_active: d.dana_active,
+        }),
+      )
+      .catch((e) => setError(e?.message ?? "Gagal memuat"))
+      .finally(() => setLoading(false));
+  }, [fetchDana]);
+
+  const uploadQr = async (file: File | null) => {
+    if (!file) return;
+    setError("");
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) return setError("Belum login");
+    const path = `${u.user.id}/dana-qr-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_")}`;
+    const { error: upErr } = await supabase.storage
+      .from("documents")
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (upErr) return setError(upErr.message);
+    const { data: pub } = supabase.storage.from("documents").getPublicUrl(path);
+    setState((s) => ({ ...s, dana_qr_url: pub.publicUrl }));
+  };
+
+  const onSave = async () => {
+    setSaving(true);
+    setError("");
+    setSavedMsg("");
+    try {
+      await saveDana({ data: state });
+      setSavedMsg("✓ Akun DANA tersimpan");
+      setTimeout(() => setSavedMsg(""), 2500);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Gagal menyimpan");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-5">
+      <div className="flex items-center gap-2 mb-3">
+        <Wallet className="h-5 w-5 text-blue-600" />
+        <h2 className="font-semibold text-slate-900">Akun DANA Merchant</h2>
+        {state.dana_active && state.dana_number && (
+          <span className="ml-auto inline-flex items-center gap-1 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+            <CheckCircle2 className="h-3 w-3" /> Aktif
+          </span>
+        )}
+      </div>
+      <p className="text-xs text-slate-500 mb-4">
+        Simpan nomor DANA toko + QR statis. Saat customer pilih metode bayar
+        <span className="font-medium"> DANA</span>, info ini otomatis tampil di kasir & nota.
+      </p>
+
+      {loading ? (
+        <p className="text-sm text-slate-500">Memuat…</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <Field label="Nomor DANA (HP terdaftar)">
+            <Input
+              value={state.dana_number ?? ""}
+              onChange={(v) => setState({ ...state, dana_number: v.replace(/\D/g, "") })}
+            />
+          </Field>
+          <Field label="Nama Penerima (sesuai DANA)">
+            <Input
+              value={state.dana_holder_name ?? ""}
+              onChange={(v) => setState({ ...state, dana_holder_name: v })}
+            />
+          </Field>
+
+          <div className="md:col-span-2">
+            <Field label="QR DANA Statis (opsional)">
+              <label className="block border-2 border-dashed border-slate-300 rounded-lg p-4 text-center cursor-pointer hover:bg-slate-50">
+                {state.dana_qr_url ? (
+                  <img src={state.dana_qr_url} alt="QR DANA" className="mx-auto max-h-44 rounded" />
+                ) : (
+                  <div className="text-slate-500 flex flex-col items-center gap-2">
+                    <Upload className="h-5 w-5" />
+                    <span className="text-xs">Upload screenshot QR DANA dari aplikasi</span>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => uploadQr(e.target.files?.[0] || null)}
+                />
+              </label>
+              {state.dana_qr_url && (
+                <button
+                  onClick={() => setState({ ...state, dana_qr_url: "" })}
+                  className="mt-2 text-xs text-red-600 hover:text-red-700 inline-flex items-center gap-1"
+                >
+                  <Trash2 className="h-3 w-3" /> Hapus QR
+                </button>
+              )}
+            </Field>
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="flex items-center gap-3">
+              <input
+                type="checkbox"
+                checked={state.dana_active}
+                onChange={(e) => setState({ ...state, dana_active: e.target.checked })}
+                className="h-4 w-4"
+              />
+              <span className="text-sm">Aktifkan pembayaran via DANA</span>
+            </label>
+          </div>
+        </div>
+      )}
+
+      {error && <p className="text-sm text-red-600 mt-3">{error}</p>}
+      {savedMsg && <p className="text-sm text-green-600 mt-3">{savedMsg}</p>}
+
+      <button
+        onClick={onSave}
+        disabled={saving || loading}
+        className="mt-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-semibold px-4 py-2 rounded-lg"
+      >
+        {saving ? "Menyimpan…" : "Simpan Akun DANA"}
+      </button>
+    </div>
+  );
+}
+

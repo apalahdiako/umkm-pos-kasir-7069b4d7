@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Plus, Trash2, Minus, Search, Receipt, FileText, Mail, X, MessageCircle, Link2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Plus, Trash2, Minus, Search, Receipt, FileText, Mail, X, MessageCircle, Link2, Wallet } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import {
   buildQrisPayload, buildReceiptText, calcHppTotal, formatCurrency, generateInvoiceId,
@@ -8,6 +8,8 @@ import {
   useProducts, useStoreSettings, useTransactions, waLink,
   type CartItem, type PaymentMethod, type ReceiptType, type Transaction,
 } from "@/lib/nota-store";
+import { useServerFn } from "@tanstack/react-start";
+import { getDanaProfile, type DanaProfile } from "@/lib/dana.functions";
 
 export const Route = createFileRoute("/transaction")({
   head: () => ({ meta: [{ title: "Kasir — Nota Pro" }] }),
@@ -32,6 +34,10 @@ function KasirPage() {
   const [lastTx, setLastTx] = useState<Transaction | null>(null);
   const [showReceipt, setShowReceipt] = useState(false);
   const [showQris, setShowQris] = useState(false);
+  const [showDana, setShowDana] = useState(false);
+  const [dana, setDana] = useState<DanaProfile | null>(null);
+  const fetchDana = useServerFn(getDanaProfile);
+  useEffect(() => { fetchDana().then(setDana).catch(() => setDana(null)); }, [fetchDana]);
   const [generatedLink, setGeneratedLink] = useState<string | null>(null);
 
   const categories = useMemo(() => {
@@ -86,8 +92,9 @@ function KasirPage() {
 
   const processPayment = () => {
     if (items.length === 0) return alert("Keranjang kosong!");
-    if (payment !== "QRIS" && amountPaid < total) return alert("Jumlah bayar kurang dari total!");
-    const paid = payment === "QRIS" ? total : amountPaid;
+    const isExternal = payment === "QRIS" || payment === "DANA";
+    if (!isExternal && amountPaid < total) return alert("Jumlah bayar kurang dari total!");
+    const paid = isExternal ? total : amountPaid;
     const tx: Transaction = {
       id: generateInvoiceId(transactions),
       date: new Date().toISOString(),
@@ -109,14 +116,19 @@ function KasirPage() {
     setTransactions([tx, ...transactions]);
     setLastTx(tx);
     setShowQris(false);
+    setShowDana(false);
     setShowReceipt(true);
     reset();
   };
 
   const handlePay = () => {
     if (items.length === 0) return alert("Keranjang kosong!");
-    if (payment === "QRIS") {
-      setShowQris(true);
+    if (payment === "QRIS") { setShowQris(true); return; }
+    if (payment === "DANA") {
+      if (!dana?.dana_active || !dana?.dana_number) {
+        return alert("Akun DANA belum diaktifkan. Buka Pengaturan → Akun DANA Merchant.");
+      }
+      setShowDana(true);
       return;
     }
     processPayment();
@@ -355,7 +367,7 @@ function KasirPage() {
               onClick={handlePay}
               className="bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold text-sm"
             >
-              {payment === "QRIS" ? "Bayar QRIS" : "Bayar & Cetak"}
+              {payment === "QRIS" ? "Bayar QRIS" : payment === "DANA" ? "Bayar via DANA" : "Bayar & Cetak"}
             </button>
 
           </div>
@@ -502,6 +514,70 @@ function KasirPage() {
           </div>
         </div>
       )}
+
+      {/* DANA modal */}
+      {showDana && dana && (
+        <div
+          className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50"
+          onClick={() => setShowDana(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-xl max-w-sm w-full p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-start mb-3">
+              <div className="flex items-center gap-2">
+                <Wallet className="h-5 w-5 text-blue-600" />
+                <h2 className="text-lg font-bold text-slate-900">Bayar via DANA</h2>
+              </div>
+              <button onClick={() => setShowDana(false)} className="text-slate-400 hover:text-slate-700">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {dana.dana_qr_url ? (
+              <div className="bg-slate-50 rounded-lg p-3 text-center">
+                <img src={dana.dana_qr_url} alt="QR DANA" className="mx-auto max-h-56 rounded" />
+                <p className="text-xs text-slate-500 mt-2">Scan QR DANA toko</p>
+              </div>
+            ) : (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                <p className="text-xs text-slate-600">Kirim ke nomor DANA</p>
+                <p className="text-2xl font-bold tracking-wider text-blue-700 mt-1">{dana.dana_number}</p>
+                {dana.dana_holder_name && (
+                  <p className="text-sm text-slate-700 mt-1">a/n {dana.dana_holder_name}</p>
+                )}
+                <button
+                  onClick={() => navigator.clipboard?.writeText(dana.dana_number ?? "")}
+                  className="mt-2 text-xs text-blue-600 hover:underline"
+                >
+                  Salin nomor
+                </button>
+              </div>
+            )}
+
+            <p className="text-center text-2xl font-bold text-blue-600 mt-4">{formatCurrency(total)}</p>
+            <p className="text-center text-xs text-slate-500 mt-1">Nominal harus sesuai. Konfirmasi setelah customer transfer.</p>
+
+            <div className="grid grid-cols-2 gap-2 mt-5">
+              <button
+                onClick={() => setShowDana(false)}
+                className="bg-slate-200 hover:bg-slate-300 text-slate-700 py-2.5 rounded-lg text-sm font-medium"
+              >
+                Batal
+              </button>
+              <button
+                onClick={processPayment}
+                className="bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg text-sm font-semibold"
+              >
+                Sudah Dibayar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
 
     </AppLayout>
   );

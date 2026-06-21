@@ -22,7 +22,7 @@ export type CartItem = {
   qty: number;
 };
 
-export type PaymentMethod = "Tunai" | "Kartu" | "Transfer" | "QRIS";
+export type PaymentMethod = "Tunai" | "Kartu" | "Transfer" | "QRIS" | "DANA";
 export type ReceiptType = "nota" | "resi" | "invoice";
 export type TxStatus = "completed" | "pending" | "cancelled";
 
