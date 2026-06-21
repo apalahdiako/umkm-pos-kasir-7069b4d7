@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Home, ShoppingCart, History, Package, Settings as SettingsIcon,
   BarChart3, Wallet, Users, BookOpen, Store, Wifi, WifiOff, LogIn, LogOut,
-  Utensils, FileText, Calculator, Banknote,
+  Utensils, FileText, Calculator, Banknote, Boxes, UserCheck, Landmark, HeartHandshake,
 } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useStoreSettings, useTransactions, formatCurrency } from "@/lib/nota-store";
@@ -14,6 +14,10 @@ const nav = [
   { to: "/tables", label: "Meja (F&B)", icon: Utensils },
   { to: "/invoices", label: "Invoice B2B", icon: FileText },
   { to: "/hpp", label: "HPP Calculator", icon: Calculator },
+  { to: "/inventory", label: "Inventory & Stok", icon: Boxes },
+  { to: "/crm", label: "CRM & Loyalty", icon: HeartHandshake },
+  { to: "/employees", label: "Karyawan & Shift", icon: UserCheck },
+  { to: "/accounting", label: "Akuntansi", icon: Landmark },
   { to: "/payments", label: "Pembayaran (Flip)", icon: Banknote },
   { to: "/history", label: "Riwayat", icon: History },
   { to: "/products", label: "Produk", icon: Package },
