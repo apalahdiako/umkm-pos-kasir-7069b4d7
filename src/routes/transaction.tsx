@@ -92,8 +92,9 @@ function KasirPage() {
 
   const processPayment = () => {
     if (items.length === 0) return alert("Keranjang kosong!");
-    if (payment !== "QRIS" && amountPaid < total) return alert("Jumlah bayar kurang dari total!");
-    const paid = payment === "QRIS" ? total : amountPaid;
+    const isExternal = payment === "QRIS" || payment === "DANA";
+    if (!isExternal && amountPaid < total) return alert("Jumlah bayar kurang dari total!");
+    const paid = isExternal ? total : amountPaid;
     const tx: Transaction = {
       id: generateInvoiceId(transactions),
       date: new Date().toISOString(),
@@ -115,14 +116,19 @@ function KasirPage() {
     setTransactions([tx, ...transactions]);
     setLastTx(tx);
     setShowQris(false);
+    setShowDana(false);
     setShowReceipt(true);
     reset();
   };
 
   const handlePay = () => {
     if (items.length === 0) return alert("Keranjang kosong!");
-    if (payment === "QRIS") {
-      setShowQris(true);
+    if (payment === "QRIS") { setShowQris(true); return; }
+    if (payment === "DANA") {
+      if (!dana?.dana_active || !dana?.dana_number) {
+        return alert("Akun DANA belum diaktifkan. Buka Pengaturan → Akun DANA Merchant.");
+      }
+      setShowDana(true);
       return;
     }
     processPayment();
