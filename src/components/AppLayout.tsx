@@ -62,7 +62,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
             {settings.logo ? (
               <img src={settings.logo} alt="Logo" className="h-10 w-10 rounded object-cover bg-white" />
             ) : (
-              <div className="h-10 w-10 rounded bg-blue-600 flex items-center justify-center font-bold">NP</div>
+              <div className="h-10 w-10 rounded bg-blue-600 flex items-center justify-center font-bold text-xs">BY</div>
             )}
             <div>
               <h1 className="text-lg font-bold leading-tight">BY.UMKMKASIR</h1>
