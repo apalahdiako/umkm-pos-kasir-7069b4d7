@@ -12,7 +12,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getDanaProfile, type DanaProfile } from "@/lib/dana.functions";
 
 export const Route = createFileRoute("/transaction")({
-  head: () => ({ meta: [{ title: "Kasir — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Kasir — BY.UMKMKASIR" }] }),
   component: KasirPage,
 });
 

@@ -8,7 +8,7 @@ import { getDanaProfile, updateDanaProfile, type DanaProfile } from "@/lib/dana.
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/settings")({
-  head: () => ({ meta: [{ title: "Pengaturan — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Pengaturan — BY.UMKMKASIR" }] }),
   component: SettingsPage,
 });
 

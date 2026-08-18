@@ -65,7 +65,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <div className="h-10 w-10 rounded bg-blue-600 flex items-center justify-center font-bold">NP</div>
             )}
             <div>
-              <h1 className="text-lg font-bold leading-tight">Nota Pro</h1>
+              <h1 className="text-lg font-bold leading-tight">BY.UMKMKASIR</h1>
               <p className="text-[10px] text-slate-400">v3.0 · UMKM</p>
             </div>
           </div>
@@ -101,7 +101,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="md:hidden bg-slate-900 text-white px-4 py-3 flex items-center gap-2">
             {settings.logo && <img src={settings.logo} alt="Logo" className="h-7 w-7 rounded object-cover bg-white" />}
-            <h1 className="text-lg font-bold flex-1">Nota Pro</h1>
+            <h1 className="text-lg font-bold flex-1">BY.UMKMKASIR</h1>
             <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${online ? "bg-green-700" : "bg-orange-700"}`}>
               {online ? "Online" : "Offline"}
             </span>

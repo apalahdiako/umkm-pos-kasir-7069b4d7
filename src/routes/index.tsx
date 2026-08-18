@@ -20,7 +20,7 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Dashboard — Nota Pro" },
+      { title: "Dashboard — BY.UMKMKASIR" },
       { name: "description", content: "Kasir & invoicing lengkap untuk UMKM." },
     ],
   }),

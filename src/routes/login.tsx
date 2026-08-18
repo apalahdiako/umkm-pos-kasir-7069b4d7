@@ -9,7 +9,7 @@ import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Masuk — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Masuk — BY.UMKMKASIR" }] }),
   component: LoginPage,
 });
 
@@ -153,7 +153,7 @@ function LoginPage() {
             <Sparkles className="h-5 w-5 text-amber-300" />
             <span className="text-xs uppercase tracking-widest font-semibold text-amber-300">Real-time POS</span>
           </div>
-          <h1 className="text-5xl font-bold leading-tight mb-3">Nota Pro</h1>
+          <h1 className="text-5xl font-bold leading-tight mb-3">BY.UMKMKASIR</h1>
           <p className="text-xl text-blue-100 mb-2">Kasir, QRIS, &amp; E-Wallet jadi satu.</p>
           <p className="text-sm text-blue-200 max-w-md">Dibuat untuk UMKM Indonesia. MDR 0.3%, tarik saldo nyaris gratis, laporan laba/rugi cerdas.</p>
           <div className="flex gap-6 mt-6 text-xs text-blue-200">
@@ -170,7 +170,7 @@ function LoginPage() {
           <Link to="/" className="text-xs text-slate-500 hover:text-blue-600">← Kembali ke beranda</Link>
           <div className="mt-4 mb-6">
             <div className="h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-xl font-bold">NP</div>
-            <h2 className="mt-4 text-2xl font-bold">{mode === "login" ? "Masuk ke Nota Pro" : "Mulai gratis hari ini"}</h2>
+            <h2 className="mt-4 text-2xl font-bold">{mode === "login" ? "Masuk ke BY.UMKMKASIR" : "Mulai gratis hari ini"}</h2>
             <p className="text-sm text-slate-500 mt-1">{mode === "login" ? "Lanjutkan ke dashboard merchant Anda" : "Setup toko Anda dalam 30 detik"}</p>
           </div>
 
@@ -221,7 +221,7 @@ function LoginPage() {
           </p>
 
           <p className="text-[10px] text-center text-slate-400 mt-6">
-            Dengan mendaftar, Anda menyetujui Syarat &amp; Ketentuan dan Kebijakan Privasi Nota Pro.
+            Dengan mendaftar, Anda menyetujui Syarat &amp; Ketentuan dan Kebijakan Privasi BY.UMKMKASIR.
           </p>
         </div>
       </div>

@@ -5,7 +5,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { formatCurrency, useStoreSettings, useTransactions } from "@/lib/nota-store";
 
 export const Route = createFileRoute("/reports")({
-  head: () => ({ meta: [{ title: "Laporan — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Laporan — BY.UMKMKASIR" }] }),
   component: ReportsPage,
 });
 

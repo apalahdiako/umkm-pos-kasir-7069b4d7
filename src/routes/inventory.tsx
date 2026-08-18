@@ -8,7 +8,7 @@ import { Modal, Field, inputCls, btnPrimary, btnDanger, btnGhost, PageHeader, Ta
 import { listInventory, upsertInventory, deleteInventory, listMovements, recordMovement } from "@/lib/umkm.functions";
 
 export const Route = createFileRoute("/inventory")({
-  head: () => ({ meta: [{ title: "Inventory & Stok — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Inventory & Stok — BY.UMKMKASIR" }] }),
   component: InventoryPage,
 });
 
