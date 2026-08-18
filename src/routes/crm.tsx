@@ -11,7 +11,7 @@ import {
 } from "@/lib/umkm.functions";
 
 export const Route = createFileRoute("/crm")({
-  head: () => ({ meta: [{ title: "CRM & Loyalty — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "CRM & Loyalty — BY.UMKMKASIR" }] }),
   component: CrmPage,
 });
 

@@ -10,7 +10,7 @@ import {
 } from "@/lib/nota-store";
 
 export const Route = createFileRoute("/pay/$id")({
-  head: () => ({ meta: [{ title: "Pembayaran — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Pembayaran — BY.UMKMKASIR" }] }),
   component: PayPage,
 });
 
@@ -77,7 +77,7 @@ function PayPage() {
             </p>
           </>
         )}
-        <p className="text-[10px] text-slate-400 text-center mt-4">Powered by Nota Pro</p>
+        <p className="text-[10px] text-slate-400 text-center mt-4">Powered by BY.UMKMKASIR</p>
       </div>
     </div>
   );

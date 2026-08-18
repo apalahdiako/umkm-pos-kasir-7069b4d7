@@ -5,7 +5,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { formatCurrency, useProducts, type Product } from "@/lib/nota-store";
 
 export const Route = createFileRoute("/products")({
-  head: () => ({ meta: [{ title: "Kelola Produk — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Kelola Produk — BY.UMKMKASIR" }] }),
   component: ProductsPage,
 });
 

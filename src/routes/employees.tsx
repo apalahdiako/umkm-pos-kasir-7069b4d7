@@ -12,7 +12,7 @@ import {
 } from "@/lib/umkm.functions";
 
 export const Route = createFileRoute("/employees")({
-  head: () => ({ meta: [{ title: "Karyawan & Shift — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Karyawan & Shift — BY.UMKMKASIR" }] }),
   component: EmpPage,
 });
 

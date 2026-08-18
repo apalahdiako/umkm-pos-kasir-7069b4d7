@@ -14,7 +14,7 @@ import {
 } from "@/lib/umkm.functions";
 
 export const Route = createFileRoute("/accounting")({
-  head: () => ({ meta: [{ title: "Akuntansi — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Akuntansi — BY.UMKMKASIR" }] }),
   component: AccPage,
 });
 

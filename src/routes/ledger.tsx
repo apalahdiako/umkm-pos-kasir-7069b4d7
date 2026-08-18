@@ -11,7 +11,7 @@ import {
 } from "@/lib/nota-store";
 
 export const Route = createFileRoute("/ledger")({
-  head: () => ({ meta: [{ title: "Mutasi Saldo — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Mutasi Saldo — BY.UMKMKASIR" }] }),
   component: LedgerPage,
 });
 
@@ -107,7 +107,7 @@ function LedgerPage() {
       <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl p-5 shadow-lg">
           <div className="flex items-center gap-2 text-blue-100 text-sm">
-            <Wallet className="h-4 w-4" /> Saldo Nota Pro
+            <Wallet className="h-4 w-4" /> Saldo BY.UMKMKASIR
           </div>
           <p className="text-3xl font-bold mt-2">{formatCurrency(balance)}</p>
           <p className="text-xs text-blue-200 mt-1">Tersedia untuk tarik tunai</p>

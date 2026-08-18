@@ -9,7 +9,7 @@ import type { DocData } from "@/components/DocumentImage";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/invoices")({
-  head: () => ({ meta: [{ title: "Invoice B2B — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Invoice B2B — BY.UMKMKASIR" }] }),
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) throw redirect({ to: "/login" });

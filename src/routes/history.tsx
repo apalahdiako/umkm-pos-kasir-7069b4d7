@@ -14,7 +14,7 @@ import {
 } from "@/lib/nota-store";
 
 export const Route = createFileRoute("/history")({
-  head: () => ({ meta: [{ title: "Riwayat Transaksi — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Riwayat Transaksi — BY.UMKMKASIR" }] }),
   component: HistoryPage,
 });
 

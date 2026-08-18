@@ -11,7 +11,7 @@ import {
 
 export const Route = createFileRoute("/payments")({
   head: () => ({ meta: [
-    { title: "Pembayaran & Penarikan — Nota Pro" },
+    { title: "Pembayaran & Penarikan — BY.UMKMKASIR" },
     { name: "description", content: "Terima pembayaran via DANA, GoPay, OVO, ShopeePay, QRIS dan tarik saldo ke bank/e-wallet via Flip." },
   ]}),
   component: PaymentsPage,

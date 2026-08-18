@@ -12,7 +12,7 @@ import {
 } from "@/lib/nota-store";
 
 export const Route = createFileRoute("/members")({
-  head: () => ({ meta: [{ title: "Member & Loyalty — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Member & Loyalty — BY.UMKMKASIR" }] }),
   component: MembersPage,
 });
 

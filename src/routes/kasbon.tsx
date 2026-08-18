@@ -12,7 +12,7 @@ import {
 } from "@/lib/nota-store";
 
 export const Route = createFileRoute("/kasbon")({
-  head: () => ({ meta: [{ title: "Kasbon / Piutang — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Kasbon / Piutang — BY.UMKMKASIR" }] }),
   component: KasbonPage,
 });
 

@@ -10,7 +10,7 @@ import {
 } from "@/lib/nota-store";
 
 export const Route = createFileRoute("/catalog")({
-  head: () => ({ meta: [{ title: "Toko Online — Nota Pro" }] }),
+  head: () => ({ meta: [{ title: "Toko Online — BY.UMKMKASIR" }] }),
   component: CatalogPage,
 });
 
@@ -56,7 +56,7 @@ function CatalogPage() {
       `---`,
       `Total: *${formatCurrency(subtotal)}*`,
       customer ? `Nama: ${customer}` : "",
-      `(via Toko Online Nota Pro)`,
+      `(via Toko Online BY.UMKMKASIR)`,
     ].filter(Boolean);
     window.open(waLink(number, lines.join("\n")), "_blank");
   };
